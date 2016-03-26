@@ -1,0 +1,27 @@
+
+/*	background 	*/
+
+body {							
+	background: #292320;	
+}
+
+#header {						
+	background: linear-gradient(to right,#000,#4e748d);	
+	border-bottom: 2px solid #c2a33b;
+	box-shadow: 3px 3px 2px rgba(0,0,0,0.5);
+}
+#header, #header a {
+	color: #ddd;
+}
+
+#header a.header__site-link,
+#header a.header__site-link:visited {
+	color: #fff4da;
+	text-shadow: 1px 1px #b07d31;
+}
+#page {
+	background: white;
+}
+#main {
+	border-top: 1px solid black;
+}
