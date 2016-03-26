@@ -1,0 +1,7 @@
+# config files
+settings.php
+default.settings.php
+
+files/
+modules/bigbrother/
+modules/colony/
