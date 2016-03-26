@@ -1,0 +1,40 @@
+<?php
+/**
+ * Implements hook_help().
+ *
+ * Displays help and module information.
+ *
+ * @param path 
+ *   Which path of the site we're using to display help
+ * @param arg 
+ *   Array that holds the current path as returned from arg() function
+ */
+function sj_core_help($path, $arg) {
+  switch ($path) {
+    case "admin/help#sj_core":
+      return '<p>Manage private projects</p>';
+      break;
+  }
+} 
+
+
+/*
+function sj_core_menu () {
+	$items['moods'] = array (
+		'type' => MENU_NORMAL_ITEM,
+		'title' => 'Moods',
+		'page callback' => 'sj_core_pages',
+		'page arguments' => array ('moods'),
+		'access callback' => 'user_access',
+		'access arguments' => array ('access content'),
+	);
+	return $items;
+}
+
+
+function sj_core_pages ($page) {
+	module_load_include ('php', 'bb_moods', 'pages/'.$page);
+	$fn = 'sb_moods_pages_'.$page;
+	return $fn();
+}
+*/
