@@ -5,7 +5,7 @@
 
 
 if (module_exists('sj_core')) {
-	$home = drupal_get_path('module', 'sj_core').'/sj_home.inc';
+	$home = drupal_get_path('module', 'sj_core').'/pages/home.php';
 	include_once($home);
 } else {
 	echo 'Suo Jure core is not enabled';	

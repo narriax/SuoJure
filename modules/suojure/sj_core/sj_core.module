@@ -17,24 +17,17 @@ function sj_core_help($path, $arg) {
   }
 } 
 
+// project config
+module_load_include ('config', 'sj_core', 'sj_db_tables');
 
-/*
-function sj_core_menu () {
-	$items['moods'] = array (
-		'type' => MENU_NORMAL_ITEM,
-		'title' => 'Moods',
-		'page callback' => 'sj_core_pages',
-		'page arguments' => array ('moods'),
-		'access callback' => 'user_access',
-		'access arguments' => array ('access content'),
-	);
-	return $items;
-}
+// drupal hooks
+module_load_include ('inc', 'sj_core', 'hooks/permission');
+module_load_include ('inc', 'sj_core', 'hooks/menu');
+
+// custom global libraries
+module_load_include ('inc', 'sj_core', 'sj_core_lib');
 
 
-function sj_core_pages ($page) {
-	module_load_include ('php', 'bb_moods', 'pages/'.$page);
-	$fn = 'sb_moods_pages_'.$page;
-	return $fn();
-}
-*/
+
+
+
