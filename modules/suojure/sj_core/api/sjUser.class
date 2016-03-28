@@ -1,0 +1,103 @@
+<?php
+
+/*
+ *	CLASS:
+ *		sjUser ($uid = null)
+ *
+ *	PUBLIC FNs:
+ *		get_uid()
+ *		get_access ($project): rid
+ *
+ * 	TESTING
+ *	- test_load_access($uid_override = null)
+ */
+
+
+
+
+
+class sjUser {
+	private $debug_mode = false;
+	
+	private $uid = null;
+	private $access = array();
+	
+	// constructor ==================================
+	function __construct ($uid = null) {
+		
+		// get uid
+		if (!isset($uid)) {
+			global $user;
+			if (!isset($user->uid)) return;
+			else $this->uid = $user->uid;
+		} else $this->uid = uid;
+		
+		// load access to projects
+		$this->load_access();
+	}
+
+	
+	
+	// getters ======================================
+	public function get_uid () {
+		return $this->uid;
+	}
+	
+	
+	
+	// access functions =============================
+	
+	public function test_load_access ($uid_override = null) {
+		if (!module_exists('devel')) {
+			drupal_set_message ('test_load_access: turn on Devel to test', 'error');
+			return;
+		}
+		$this->debug_mode = true;
+		if (isset($uid_override)) $this->uid = $uid_override;
+		dpm("============== sjUser > test_load_access =============== \n uid = ".$this->uid." \n...running load_access()...\n");
+		$this->load_access();
+		$this->debug_mode = false;
+	}
+	
+	// load project access from DB (overwrites existing object data)
+	private function load_access () {
+		if ($this->debug_mode) sjl('load_access()', 'trace', 'sjUser');
+			
+		// reset current object data
+		$this->access = array();
+		
+		// quit if user unknown
+		if (!isset($this->uid)) {
+			if ($this->debug_mode) sjl('uid=null', 'failure');
+			return;
+		} elseif ($this->debug_mode) sjl('uid='.$this->uid);
+
+		// construct query
+		global $sb_db_tables;
+		$q 	= db_select ($sb_db_tables['project_access'],'pa')
+			-> fields ('pa', array('project', 'rid'))
+			-> condition ('pa.uid', $this->uid);
+		if ($this->debug_mode) sjl('fetch access for uid='.$this->uid, 'query', $q);
+		
+		// execute query
+		if ($results = $q->execute() -> fetchAllKeyed(0, 1)) {
+			$this->access = $results;
+			if ($this->debug_mode) sjl ('access table for uid='.$this->uid, 'array', $this->access);
+		} elseif ($this->debug_mode) {
+			sjl ('no records were fetched', 'failure');
+		}
+		if ($this->debug_mode) sjp();
+	}
+	
+	// returns rid for specified project
+	public function get_access ($project) {
+		// allow admins everything
+		global $user;
+		if (in_array('administrator', $user->roles)) return array_search('administrator', user_roles());
+		
+		// for the rest, go off access table
+		if (array_key_exists($project, $this->access)) return $this->access[$project];
+		else return 0;
+	}
+	
+}
