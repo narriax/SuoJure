@@ -1,7 +1,11 @@
-# config files
-settings.php
-default.settings.php
+# ignore root folder
+/*
 
-files/
-modules/bigbrother/
-modules/colony/
+# ignore all subdirectories
+/*/
+
+# un-ignore suojure modules
+!/modules/suojure/
+
+# un-ignore themes
+!/themes/
