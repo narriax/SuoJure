@@ -1,11 +1,13 @@
 # ignore root folder
 /*
 
-# ignore all subdirectories
-/*/
+# un-ignore modules and themes
+!/modules/
+!/themes/
+
+# ignore other modules
+/modules/*
 
 # un-ignore suojure modules
 !/modules/suojure/
 
-# un-ignore themes
-!/themes/
