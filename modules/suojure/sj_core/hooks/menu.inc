@@ -15,6 +15,14 @@ function sj_core_menu () {
 		'access callback' => 'user_access',
 		'access arguments' => array ('sj admin'),
 	);
+	$items['dbcheck'] = array (
+		'type' => MENU_NORMAL_ITEM,
+		'title' => 'DB Check',
+		'page callback' => 'sj_core_pages',
+		'page arguments' => array ('dbcheck'),
+		'access callback' => 'user_access',
+		'access arguments' => array ('sj admin'),
+	);
 	return $items;
 }
 

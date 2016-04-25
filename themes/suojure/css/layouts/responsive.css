@@ -40,7 +40,9 @@
   _overflow: hidden;
   _overflow-y: visible;
 }
-
+#content {
+	padding-bottom: 1em;
+}
 /* Containers for grid items and flow items. */
 #header,
 #main,

@@ -46,7 +46,6 @@ class sjUser {
 	
 	
 	// access functions =============================
-	
 	public function test_load_access ($uid_override = null) {
 		if (!module_exists('devel')) {
 			drupal_set_message ('test_load_access: turn on Devel to test', 'error');
@@ -73,8 +72,8 @@ class sjUser {
 		} elseif ($this->debug_mode) sjl('uid='.$this->uid);
 
 		// construct query
-		global $sb_db_tables;
-		$q 	= db_select ($sb_db_tables['project_access'],'pa')
+		global $sj_db_tables;
+		$q 	= db_select ($sj_db_tables['project_access'],'pa')
 			-> fields ('pa', array('project', 'rid'))
 			-> condition ('pa.uid', $this->uid);
 		if ($this->debug_mode) sjl('fetch access for uid='.$this->uid, 'query', $q);

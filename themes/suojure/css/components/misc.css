@@ -756,3 +756,7 @@ tr.selected td {
   background-color: #0072b9;
   background-image: url('../../images/progress.gif');
 }
+
+ul {
+	margin: 0;
+}
