@@ -2,6 +2,7 @@
 /*
 
 # un-ignore modules and themes
+!/_old_*
 !/modules/
 !/themes/
 
