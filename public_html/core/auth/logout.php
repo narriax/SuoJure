@@ -1,8 +1,5 @@
 <?php
-session_start();
-//unset($_SESSION['suojure']);
-session_unset();
-//session_destroy();
+include ('../../config.inc');
+session_close();
 header("Location: ../../");
-
 ?>

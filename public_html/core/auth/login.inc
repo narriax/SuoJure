@@ -5,12 +5,12 @@ echo '<script src="core\session\login.js"></script>'.PHP_EOL;
 echo '<script src=".\\'.req('openPGP').'"></script>'.PHP_EOL;
 
 
-var_dump($_POST);
+//var_dump($_POST);
 if (array_key_exists('action', $_POST) && array_key_exists('username', $_POST)) {
 	global $db;
 	//$secret = '{new user}';
 	if ($user = $db->select("users", ["username", "password"], ["username" => $_POST['username']])) {
-		var_dump($user);	
+		//var_dump($user);	
 	}	
 	
 	/*
@@ -36,11 +36,7 @@ if (array_key_exists('action', $_POST) && array_key_exists('username', $_POST)) 
 		if (!$user || $user[0]["password"] != $_POST["password"]) {
 			echo "<div class=error>Login information does not match.</div>";
 		} else {
-			$_SESSION['suojure'] = array ('user' => $user[0]);
-			
-			$format = 'Y-m-d H:i:s';
-			$date = DateTime::createFromFormat($format, new DateTime());
-			$db->update("users", ["date_visited" => $date], ["username" => 	$user[0]["username"]]);
+			session_open($_POST["username"], "browser");
 			header("Location: .");
 		}
 		
