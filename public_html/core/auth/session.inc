@@ -1,6 +1,6 @@
 <?php
 
-function check_login() {
+function user_access_header () {
 	if (!session_check("")) {
 		// no valid session, go to login
 		include ('login.inc');
@@ -75,6 +75,19 @@ function session_close($sessionid = "") {
 	}
 }
 
+
+
+function auth_code ($username, $password) {
+	global $db;
+	if (!$user = $db->select("users", ["username", "password"], ["username" => $username])) {
+		return -1;
+	}
+	if (!$user || $user[0]["password"] != $_POST["password"]) {
+		return -2;
+	} else {
+		return 0;
+	}
+}
 
 
 ?>

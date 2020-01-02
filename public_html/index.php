@@ -6,7 +6,7 @@
 
 <?php 
 	include_once("config.inc"); 
-	check_login();
+	user_access_header();
 ?>
 
 
