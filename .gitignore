@@ -1,10 +1,6 @@
-# ignore root folder
-/*
 
-# un-ignore modules and themes
-!/_old_*
-!/modules/
-!/themes/
+# ignore 3rd party libraries
+/_libraries/*
 
 # ignore other modules
 /modules/*
