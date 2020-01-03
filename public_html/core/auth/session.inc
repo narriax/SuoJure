@@ -24,6 +24,7 @@ function session_open ($username, $device) {
 		$sessid = random_string(32);	
 	}
 	if (empty($device)) $device = "browser";
+	$db->delete("user_sessions", ["username" => $username, "device" => $device]);
 	$db->insert("user_sessions", ["id" => $sessid, "username" => $username, "device" => $device]);
 	
 	$date = (new DateTime())->format('Y-m-d H:i:s');
