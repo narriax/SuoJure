@@ -13,6 +13,9 @@ if (array_key_exists('action', $_POST)) {
 	echo '<div style="background:#333; color:silver; border: 1px solid gold; padding: 6px;">'.$server_output.'&nbsp;</div>';
 }
 
+//include ("../config.inc");
+
+
 echo '<hr>';
 var_dump($_POST);
 

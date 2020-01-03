@@ -40,7 +40,8 @@ if (array_key_exists("action", $_POST) && $_POST["action"] == "user_create") {
 		die ("<div class=error>User already exists</div>");
 	}
 	
-	$db->insert("users", ["username" => $username, "email" => $email, "password" => $password]);
+	$uoid = generate_new_uoid();
+	$db->insert("users", ["uoid" => $uoid, "username" => $username, "email" => $email, "password" => $password]);
 }
 
 ?>
