@@ -23,7 +23,10 @@ $db_info = array(
 // list required libraries
 global $required;
 $required = array();
-$required['medoo'] = '\libraries\medoo\src\Medoo.php';
+$required['medoo'] = array(
+	'\libraries\medoo\src\Medoo.php',
+	'..\..\_lib\_tools\medoo\src\Medoo.php' 
+);
 $required['openPGP'] = '\libraries\openPGPjs\dist\openpgp.min.js';
 
 function req($libname) {
@@ -33,12 +36,29 @@ function req($libname) {
 
 // =======================================================
 
+include_once('lib_utils.inc');
 
 // include required libraries
 foreach ($required as $r => $rloc) {
-	if (!file_exists($DIR_ROOT.$rloc))
-		die ("<div class=error>Required library missing: <b>".$r."</b>: [".$rloc."]</div>");
-	else if (substr($rloc, -4) == ".php") include_once($DIR_ROOT.$rloc);
+	
+	$reqdir = '';
+	if (is_array($rloc)) {
+		foreach ($rloc as $oneloc) {
+			if (file_exists(rootpath($oneloc))) {
+				$reqdir = $oneloc;
+				break;
+			}
+		}
+		if ($reqdir === '') 
+			$reqdir = implode(']; [', $rloc);
+	} else {
+		$reqdir = $oneloc;
+	}
+		
+	if (!file_exists(rootpath($reqdir))) {
+		die ("<div class=error>Required library missing: <b>".$r."</b>: [".$reqdir."]</div>");
+	} else if (substr($reqdir, -4) == ".php") 
+		include_once(rootpath($reqdir));
 }
 
 // =======================================================
@@ -56,7 +76,6 @@ $db = new Medoo([
 
 // =======================================================
 // bootstrap sessions
-include_once('lib_utils.inc');
 include_once('core/auth/session.inc');
 
 

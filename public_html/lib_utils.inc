@@ -58,4 +58,17 @@ function generate_new_uoid () {
 
 
 
+function rootpath ($dir) {
+	global $DIR_ROOT;
+	
+	$root = $DIR_ROOT;
+	while (substr($dir, 0, 3) === '..\\') {
+		$root = substr($root, 0, strrpos($root, "\\"));
+		$dir = substr($dir, 3);
+	}
+	if (substr($dir, 0, 1) !== '\\') $dir = '\\'.$dir;
+	return $root.$dir;	
+}
+
+
 ?>
