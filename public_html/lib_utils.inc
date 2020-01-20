@@ -70,5 +70,23 @@ function rootpath ($dir) {
 	return $root.$dir;	
 }
 
+function themepath ($file) {
+	global $THEMES;
+	$default_skin = array_keys($THEMES)[0];
+	$prefskin = $default_skin;
+	
+	// load from session
+	if (session_status() == PHP_SESSION_ACTIVE) {
+		if (array_key_exists('skinpath', $_SESSION['suojure']))
+			return rootpath($_SESSION['suojure']['skinpath'].'\\'.$file);
+		
+		//TODO: load preferred skin from profile here
+		//$prefskin = $default_skin;
+		$_SESSION['suojure']['skinpath'] = $THEMES[$prefskin];
+	}
+	return rootpath($THEMES[$prefskin].'\\'.$file);
+}
+
+
 
 ?>

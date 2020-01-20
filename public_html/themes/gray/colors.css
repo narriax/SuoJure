@@ -1,0 +1,34 @@
+html {
+	background: #000;
+	color: #d8e4ef;
+}
+body {
+	background: #1c2126;
+}
+a {
+	color: #4f9dcf;
+}
+a:active {
+    color: white;
+}
+a:hover, a:focus {
+    color: #80e4ff;
+}
+
+.hoverable {
+	-webkit-filter: brightness(80%); /* Safari 6.0 - 9.0 */
+	filter: brightness(80%);
+}
+.hoverable:hover {
+	-webkit-filter: brightness(100%); /* Safari 6.0 - 9.0 */
+	filter: brightness(100%);
+}
+
+input {
+	background: #131313;
+	border: 1px solid #5a5f61;
+	color: white;
+}
+input[type="button"],input[type="submit"] {
+	background: #2885af;
+}

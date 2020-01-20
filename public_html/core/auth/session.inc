@@ -5,9 +5,34 @@ function user_access_header () {
 		// no valid session, go to login
 		include ('login.inc');
 		die();
-	} else {
-		echo "Welcome, ".$_SESSION['suojure']['user']['username'];
-		echo ' -- <a href="core/auth/logout.php">Logout</a>';
+	} else {	
+		global $WEB_ROOT;
+		$selid = '';
+		
+		
+		if (array_key_exists('selpersona', $_GET)) {
+			$_SESSION['suojure']['user']['selected_persona'] = $_GET['selpersona'];
+		}
+		
+		if (array_key_exists('selected_persona', $_SESSION['suojure']['user'])) {
+			$selid = $_SESSION['suojure']['user']['selected_persona'];
+		}
+		
+		echo '<div class=access-header-bar>';
+			echo '<div class=line1>';
+			echo "Welcome, ".$_SESSION['suojure']['user']['username'];
+			echo ' <a id=profilelink href="'.$WEB_ROOT.'/core/auth/profile.php" class=hoverable><label>Profile</label></a>'.
+				 ' <a id=logoutlink href="'.$WEB_ROOT.'/core/auth/logout.php" class=hoverable><label>Logout</label></a>';
+			
+			echo '</div><div class=line2>';
+			foreach ($_SESSION['suojure']['user']['personas'] as $uiod => $personaname) {
+				if ($selid === $personaname)
+					echo '<span class=selection>'.$personaname.'</span>';
+				else
+					echo '<a href="?selpersona='.$personaname.'">'.$personaname.'</a> ';
+			}
+			echo '</div>';
+		echo '</div>';
 	}
 }
 
@@ -31,10 +56,26 @@ function session_open ($username, $device) {
 	$db->update("users", ["date_visited" => $date], ["username" => 	$user[0]["username"]]);
 			
 	if ($device == "browser") {
-		session_start();
+		if (session_status() == PHP_SESSION_NONE)
+			session_start();
+		else 
+			session_unset();	
 		$_SESSION['suojure'] = array ('sessionid' => $sessid, 'user' => $user[0]);
 	}
+	session_load_personas();
+
 	return $sessid;
+}
+
+
+function session_load_personas() {
+	global $db;
+	$personas = $db->select('user_personas', ['uoid', 'personaname'], ['username' => $_SESSION['suojure']['user']["username"]]);
+	$_SESSION['suojure']['user']['personas'] = array();
+	foreach ($personas as $pdata) {
+		var_dump($pdata);
+		$_SESSION['suojure']['user']['personas'][$pdata['uoid']] = $pdata['personaname'];
+	}
 }
 
 
@@ -42,7 +83,8 @@ function session_check($device, $sessionid = "") {
 	if (empty($device)) $device = "browser";
 	
 	if (empty($sessionid) && $device == "browser") {
-		session_start();
+		if (session_status() == PHP_SESSION_NONE)
+			session_start();
 		if (!isset($_SESSION) || !array_key_exists('suojure', $_SESSION))
 			return false;
 		$sessionid = $_SESSION['suojure']['sessionid'];

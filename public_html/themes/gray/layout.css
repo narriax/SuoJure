@@ -1,0 +1,41 @@
+body {
+	width: 86%;
+	margin: auto;
+	padding: 2em;
+}
+
+.access-header-bar {
+	float:right; 
+	margin-top: -5em;
+	margin-right: -0.5em;
+}
+.access-header-bar label {
+	display: none;
+}
+.access-header-bar a {
+	display: inline-block;
+	width: 20px;
+	height: 20px;
+	background-size: contain;
+	background-position: center center;
+	margin-bottom: -0.4em;
+	margin-left: 0.5em;
+	margin-right: 0.25em;
+}
+.access-header-bar a#profilelink {
+	background-image: url('icons/cog.png');
+}
+.access-header-bar a#logoutlink {
+	background-image: url('icons/logout.png');
+}
+.access-header-bar .selection {
+	display: inline-block;
+	color: gold;
+	margin-left: 0.5em;
+	margin-right: 0.25em;
+}
+
+input {
+	padding: 0.5em;
+	margin-right: 0.25em;
+}

@@ -1,14 +1,12 @@
-<html>
-<head></head<
+<?php
 
-<body>
-<h3>Suo Jure</h3>
+include_once("config.inc"); 
 
-<?php 
-	include_once("config.inc"); 
-	user_access_header();
+	
+	
 ?>
 
+<a href="tasks">Tasks</a>
 
 </body>
 </html>
