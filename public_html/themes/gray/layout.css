@@ -39,3 +39,18 @@ input {
 	padding: 0.5em;
 	margin-right: 0.25em;
 }
+
+
+.floatcard {
+	float: left;
+	width: 120px;
+	height: 200px;
+	background: black;
+	border-radius: 0.5em;
+	margin: 0.25em;
+	padding: 0.5em;
+}
+
+
+
+
