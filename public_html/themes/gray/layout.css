@@ -41,16 +41,28 @@ input {
 }
 
 
+.floatrow {
+	float: left;
+	clear: both;
+	width: 850px;
+}
 .floatcard {
 	float: left;
-	width: 120px;
-	height: 200px;
+	width: 100px;
+	height: 100px;
 	background: black;
 	border-radius: 0.5em;
 	margin: 0.25em;
 	padding: 0.5em;
 }
-
-
+.calendar .floatcard .date {
+	float: right; 
+	height:1.7em;
+	width:2.1em;
+	background: #13275f;
+	text-align: center;
+	padding-top: 0.4em;
+	border-radius: 01em;
+}
 
 

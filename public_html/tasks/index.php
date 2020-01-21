@@ -27,23 +27,34 @@ for ($i=0; $i < count($daysOfWeek); $i++) {
 	}
 }
 
-
+$todayD = $today->format('d')-0;
 $d = -1;
-for ($w=0; $w < 6; $w++) {
+for ($w=0; $w < 7; $w++) {
+	echo '<div class="floatrow calendar week"> ';
 	for ($i=0; $i < count($daysOfWeek); $i++) {	
-		if ($daysOfWeek[$i] == $firstday_month->format('D'))
+
+		if ($d < 0 && $daysOfWeek[$i] == $firstday_month->format('D'))
 			$d = 0;
 		if ($d > -1) $d++;
 		
-		$day = date_create_from_format('d m Y', $d.$today->format(' m Y'));
-		if ($d < 0) 
-			$day -= strtotime('-1 day');			// STOPPED HERE
+		$cls = '';
+		if ($d < 0) {
+			$day = date_create_from_format('d m Y', '01'.$today->format(' m Y'));
+			$day = date("Y-m-d", strtotime($day->format('Y-m-d').' -'.($monthDayIndex - $i).' day'));
+			$day = date_create_from_format('Y-m-d', $day);
+			$cls .= ' lastmonth';
+		} else {
+			$day = date_create_from_format('d m Y', $d.$today->format(' m Y'));
+		}
 		
 		echo '<div class="floatcard daycard">';
-		echo '<div style="float: right;">'.$day->format('d').'</div>';
-		echo '<h4>'.$daysOfWeek[$i].'</h4>';
+		echo '<div class=date><b>'.$day->format('d').'</b></div>';
+		echo '<h4 style="margin-top: 0;">'.$daysOfWeek[$i].'</h4>';
 		echo '</div>';
 	}
+	echo '</div>';
+	if ($day->format('d') < 8 && $w >= round($todayD / 7)) 
+		break;
 }
 
 ?>
