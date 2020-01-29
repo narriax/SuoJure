@@ -1,0 +1,16 @@
+[submodule "public_html"]
+	path = public_html
+	url = https://git.drupalcode.org/project/drupal.git
+	branch = 7.x
+[submodule "public_html/sites/all/modules/devel"]
+	path = public_html/sites/all/modules/devel
+	url = https://git.drupalcode.org/project/devel.git
+	branch = 7.x-1.x
+[submodule "public_html/sites/all/modules/module_filter"]
+	path = public_html/sites/all/modules/module_filter
+	url = https://git.drupalcode.org/project/module_filter.git
+	branch = 7.x-2.x
+[submodule "public_html/sites/all/modules/ctools"]
+	path = public_html/sites/all/modules/ctools
+	url = https://git.drupalcode.org/project/ctools.git
+	branch = 7.x-1.x
