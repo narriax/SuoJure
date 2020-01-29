@@ -14,3 +14,7 @@
 	path = public_html/sites/all/modules/ctools
 	url = https://git.drupalcode.org/project/ctools.git
 	branch = 7.x-1.x
+[submodule "public_htmlsitesallfeatures"]
+	path = public_html/sites/all/features
+	url = https://git.drupalcode.org/project/features.git
+	branch = 7.x-2.x
