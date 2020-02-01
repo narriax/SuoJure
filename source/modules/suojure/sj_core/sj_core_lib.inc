@@ -45,3 +45,49 @@ function sjp() {
 }
 
 
+
+
+function random_string($length = 16) {
+    $input = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    $input_length = strlen($input);
+    $random_string = '';
+    for($i = 0; $i < $length; $i++) {
+        $random_character = $input[mt_rand(0, $input_length - 1)];
+        $random_string .= $random_character;
+    }
+ 
+    return $random_string;
+}
+
+
+function generate_new_uoid ($for_tables = array(), $min_digits = 4, $max_digits = 16) {
+    global $db;
+
+	if ($max_digits < $min_digits) $max_digits = $min_digits;
+	$min = pow(10, $min_digits-1);
+	$max = pow(10, $max_digits)-1;
+	$tables = array_keys($for_tables);
+    
+	$attempts = 0;
+	if (count($for_tables) == 0)  {
+		$try_me = rand($min, $max);
+	} else {
+		$try_me = 0;
+		while ($try_me == 0) {
+			$try_me = rand($min, $max);
+			foreach ($for_tables as $table => $col) {
+				$query = db_select($table, 't') -> fields('t', array($col)) -> condition('t.'.$col, $try_me)->countQuery();
+				if ($query->execute()->fetchField() > 0) {
+					$try_me = 0;
+					break;
+				}
+			}
+		}	
+		$attempts++;
+		if ($attempts > 10) {
+			return 0;
+		}
+	}
+    return $try_me;
+}
+

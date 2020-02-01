@@ -1,0 +1,23 @@
+<?php
+
+class sjColorSet {
+	
+	
+	static function GetColorTypes () {
+		return db_select('sj_clrtype', 'ct')->fields('ct', array('name'))->orderBy('weight')->execute()->fetchCol('name');
+	}
+	
+	static function GetColorFamilies() {
+		return db_select('sj_clrfamily', 'ct')->fields('ct', array('name'))->orderBy('weight')->execute()->fetchCol('name');
+	}
+	
+	static function GetPresetColors() {
+		$q = db_select('sj_clr', 'c')->fields('c', array('name', 'color'));
+		$q->join('sj_clrfamily', 'cf', 'c.family=cf.name');
+		$q->addField('cf', 'name', 'family');
+		$q->addField('cf', 'weight', 'familyweight');
+		$q->orderBy('familyweight');
+		return $q->execute()->fetchAssoc('name');
+	}
+	
+}

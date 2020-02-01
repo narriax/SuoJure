@@ -44,7 +44,6 @@ class sjUser {
 	}
 	
 	
-	
 	// access functions =============================
 	public function test_load_access ($uid_override = null) {
 		if (!module_exists('devel')) {
@@ -99,4 +98,8 @@ class sjUser {
 		else return 0;
 	}
 	
+	
+	
+	
+	// personas
 }

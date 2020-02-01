@@ -1,0 +1,173 @@
+<?php
+
+function sj_core_install() {
+	
+	$q = db_insert('sj_clrtype') -> fields(array ('name', 'weight'));
+	$q -> values (array ('name' => 'primary', 'weight' => 1));
+	$q -> values (array ('name' => 'secondary', 'weight' => 2));
+	$q -> values (array ('name' => 'aux', 'weight' => 3));
+	$q->execute();
+
+	$q = db_insert('sj_clrfamily') -> fields(array ('name', 'weight'));
+	$q -> values (array ('name' => 'red', 'weight' => 1));
+	$q -> values (array ('name' => 'orange', 'weight' => 2));
+	$q -> values (array ('name' => 'yellow', 'weight' => 3));
+	$q -> values (array ('name' => 'green', 'weight' => 4));
+	$q -> values (array ('name' => 'teal', 'weight' => 5));
+	$q -> values (array ('name' => 'blue', 'weight' => 6));
+	$q -> values (array ('name' => 'purple', 'weight' => 7));
+	$q->execute();
+	
+}
+
+function sj_core_schema() {
+  $schema = array();
+  sj_core_schema_colors($schema);
+  sj_core_schema_users($schema);
+
+  return $schema;
+}
+
+function sj_core_schema_colors(&$schema) {
+	
+  $schema['sj_clrtype'] = array(
+	'description' => 'Color types',
+	'primary key' => array ('name'),
+	'fields' => array(
+		'name' => array(
+		  'type' => 'varchar',
+		  'size' => 16,
+		  'not null' => TRUE,
+		),
+		'weight' => array(
+		  'type' => 'int',
+		  'size' => 2,
+		  'not null' => TRUE,
+		),		
+	),
+  ); 	
+	
+  $schema['sj_clrfamily'] = array(
+	'description' => 'Color Families',
+	'primary key' => array ('name'),
+	'fields' => array(
+		'name' => array(
+		  'type' => 'varchar',
+		  'size' => 16,
+		  'not null' => TRUE,
+		),
+		'weight' => array(
+		  'type' => 'int',
+		  'size' => 2,
+		  'not null' => TRUE,
+		),		
+	),
+  );	
+	
+  $schema['sj_clr'] = array(
+	'description' => 'Named colors',
+	'primary key' => array ('name'),
+	'fields' => array(
+		'name' => array(
+		  'type' => 'varchar',
+		  'size' => 16,
+		  'not null' => TRUE,
+		),
+		'family' => array (
+		  'type' => 'varchar',
+		  'size' => 16,
+		  'not null' => TRUE,
+		),		
+		'color' => array(
+		  'type' => 'varchar',
+		  'size' => 6,
+		  'not null' => TRUE,
+		),
+	),
+  );
+  
+  $schema['sj_clrset'] = array(
+	'description' => 'Color sets',
+	'primary key' => array ('id'),
+	'fields' => array(
+		'id' => array(
+		  'type' => 'int',
+		  'size' => 16,
+		  'not null' => TRUE,
+		),
+		
+	),
+  );
+ 
+  
+  $schema['sj_clrset_clrs'] = array(
+	'description' => 'Color set values',
+	'indexes' => array ('clrsetid'),
+	'fields' => array(
+		'clrsetid' => array(
+		  'type' => 'int',
+		  'size' => 16,
+		  'not null' => TRUE,
+		),
+		'clrtype' => array(
+		  'type' => 'varchar',
+		  'size' => 16,
+		  'not null' => TRUE,
+		),
+		'clr' => array(
+		  'type' => 'varchar',
+		  'size' => 16,
+		  'not null' => TRUE,
+		),
+	),
+  );  
+}
+
+function sj_core_schema_users(&$schema) {
+  $schema['sj_user_persona'] = array(
+	'description' => 'Personas (sub-users)',
+	'primary key' => array ('id'),
+	'indexes' => array ('username', 'name'),
+	'fields' => array(
+		'id' => array(
+		  'type' => 'int',
+		  'size' => 4,
+		  'not null' => TRUE,
+		),
+		'username' => array(
+		  'type' => 'varchar',
+		  'length' => 16,
+		  'not null' => TRUE,
+		  'default' => '',
+		),	
+		'name' => array(
+		  'type' => 'varchar',
+		  'length' => 16,
+		  'not null' => TRUE,
+		  'default' => '',
+		),
+		'grp' => array(
+		  'type' => 'varchar',
+		  'length' => 16,
+		  'not null' => FALSE,
+		  'default' => NULL,
+		),
+		'clrsetid' => array (
+		  'type' => 'int',
+		  'size' => 16,
+		  'not null' => FALSE,
+		  'default' => NULL,
+		),
+		'date_added' => array(
+		  'mysql_type' => 'timestamp',
+		  'not null' => TRUE,
+		),	
+		'date_last_modified' => array(
+		  'mysql_type' => 'timestamp',
+		  'not null' => TRUE,
+		),			
+	),
+  );
+}
+
+
