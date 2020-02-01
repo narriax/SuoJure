@@ -18,3 +18,11 @@
 	path = public_html/sites/all/features
 	url = https://git.drupalcode.org/project/features.git
 	branch = 7.x-2.x
+[submodule "public_html/sites/all/modules/entity"]
+	path = public_html/sites/all/modules/entity
+	url = https://git.drupalcode.org/project/entity.git
+	branch = 7.x-1.x
+[submodule "public_html/sites/all/modules/token"]
+	path = public_html/sites/all/modules/token
+	url = https://git.drupalcode.org/project/token.git
+	branch = 7.x-1.x
