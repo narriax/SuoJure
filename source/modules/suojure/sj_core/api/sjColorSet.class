@@ -3,20 +3,27 @@
 class sjColorSet {
 	
 	
-	static function GetColorTypes () {
-		return db_select('sj_clrtype', 'ct')->fields('ct', array('name'))->orderBy('weight')->execute()->fetchCol('name');
+	static function GetColorTypes ($full = false) {
+		if ($full)
+			return db_select('sj_clrtype', 'ct')->fields('ct', array())->orderBy('weight')->execute()->fetchAllAssoc('name');
+		else
+			return db_select('sj_clrtype', 'ct')->fields('ct', array('name'))->orderBy('weight')->execute()->fetchCol('name');
 	}
 	
 	static function GetColorFamilies() {
 		return db_select('sj_clrfamily', 'ct')->fields('ct', array('name', 'baseclr'))->orderBy('weight')->execute()->fetchAllKeyed(0,1);
 	}
 	
+	static function GetColorShades() {
+		return db_select('sj_clrshades', 'cs')->fields('cs', array('name', 'math'))->orderBy('weight')->execute()->fetchAllKeyed(0,1);
+	}	
+	
 	static function GetPresetColors() {
 		$q = db_select('sj_clr', 'c')->fields('c', array('name', 'color', 'shade'));
 		$q->join('sj_clrfamily', 'cf', 'c.family=cf.name');
 		$q->addField('cf', 'name', 'family');
 		$q->addField('cf', 'weight', 'familyweight');
-		$q->orderBy('familyweight');
+		$q->orderBy('cf.weight');
 		return $q->execute()->fetchAllAssoc('name');
 	}
 	

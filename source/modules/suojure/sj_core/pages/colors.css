@@ -1,3 +1,56 @@
-body {
-	color:red;
+.color-pane.form-wrapper {
+	display: inline-block;
+	position:relative;
+	float: left;
+	height: 90px;
+}
+
+.color-pane.form-wrapper .fieldset-wrapper {
+	margin: 0;
+	padding: 0 15px;
+}
+.color-pane.form-wrapper input.form-text  {
+	max-width: 8em;
+}
+.color-pane.form-wrapper .form-type-textfield {
+	padding: 0;
+}
+.color-pane-new .form-type-jquery-colorpicker,
+.color-pane-new .form-submit {
+	display: inline-block;
+	margin-right: 5px;
+	float: left;
+}
+.color-family {
+	padding-left:3em;
+}
+.color-family .shade-label {
+	position: absolute;
+	color: gray;
+	font-style: italic;
+	top: -1.5em;
+	width: 100%;
+	text-align: center;
+	left: 0;
+}
+
+
+.color-pane-new .form-submit {
+	margin-top: 1em;
+}
+.color-save-btn {
+	margin: 0;
+	position: absolute;
+	right: 0;
+	top: 10px;
+}
+
+.color-family .swatch {
+	display: block;
+	float: left;
+	width:30px;
+	height: 100%;
+	position: absolute;
+	left: 0;
+	top: 0;
 }

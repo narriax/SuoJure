@@ -22,20 +22,26 @@ function sj_core_install() {
 	$q -> values (array ('name' => 'secondary', 'weight' => 2));
 	$q -> values (array ('name' => 'aux', 'weight' => 3));
 	$q->execute();
+	
+	$q = db_insert('sj_clrshades') -> fields(array ('name', 'math', 'weight'));
+	$q -> values (array ('name' => 'pastel', 'math' => '', 'weight' => 25));
+	$q -> values (array ('name' => 'pure', 'math' => '', 'weight' => 50));
+	$q -> values (array ('name' => 'dark', 'math' => '', 'weight' => 75));
+	$q->execute();	
 
 	$colors = array (
-		'red' => 	  array('base' => array(16, 0, 0), 	'dark' => 'maroon', 	'light'=>'rose'),
-		'orange' =>   array('base' => array(16, 9, 0), 	'dark' => 'brown', 		'light'=>'salmon'),
-		'yellow' =>   array('base' => array(16,16, 0), 	'dark' => 'bile', 		'light'=>'cream'),
-		'grass' => 	  array('base' => array(9,16, 0), 	'dark' => 'swamp', 		'light'=>'tea'),
-		'lime' => 	  array('base' => array( 0,16, 0), 	'dark' => 'green', 		'light'=>'eco'),
-		'leygreen' => array('base' => array( 0,16,10), 	'dark' => 'forest', 	'light'=>'aero'),
-		'cyan' => 	  array('base' => array( 0,14,16), 	'dark' => 'teal', 		'light'=>'ice'),
-		'sky' => 	  array('base' => array( 0,10,16), 	'dark' => 'sea', 		'light'=>'babyblue'),
-		'blue' => 	  array('base' => array( 0, 4,16), 	'dark' => 'navy', 		'light'=>'powder'),
-		'violet' =>   array('base' => array( 8, 0,16), 	'dark' => 'universe', 	'light'=>'lavender'),
-		'magenta' =>  array('base' => array(12, 0,16), 	'dark' => 'purple', 	'light'=>'lace'),
-		'wine' => 	  array('base' => array(16, 0, 10), 'dark' => 'purpura', 	'light'=>'pink'),
+		'red' => 	  array('base' => array(16, 0, 0), 	'dark' => 'maroon', 	'pastel'=>'rose'),
+		'orange' =>   array('base' => array(16, 9, 0), 	'dark' => 'brown', 		'pastel'=>'salmon'),
+		'yellow' =>   array('base' => array(16,16, 0), 	'dark' => 'bile', 		'pastel'=>'canary'),
+		'grass' => 	  array('base' => array(9,16, 0), 	'dark' => 'swamp', 		'pastel'=>'tea'),
+		'lime' => 	  array('base' => array( 0,16, 0), 	'dark' => 'green', 		'pastel'=>'eco'),
+		'leygreen' => array('base' => array( 0,16,10), 	'dark' => 'forest', 	'pastel'=>'aero'),
+		'cyan' => 	  array('base' => array( 0,14,16), 	'dark' => 'teal', 		'pastel'=>'ice'),
+		'sky' => 	  array('base' => array( 0,10,16), 	'dark' => 'sea', 		'pastel'=>'babyblue'),
+		'blue' => 	  array('base' => array( 0, 4,16), 	'dark' => 'navy', 		'pastel'=>'powder'),
+		'violet' =>   array('base' => array( 8, 0,16), 	'dark' => 'universe', 	'pastel'=>'lavender'),
+		'magenta' =>  array('base' => array(12, 0,16), 	'dark' => 'purple', 	'pastel'=>'lace'),
+		'fuchsia' =>  array('base' => array(16, 0, 10), 'dark' => 'wine', 		'pastel'=>'pink'),
 	);
 	$color_keys = array_keys($colors);
 
@@ -60,7 +66,7 @@ function sj_core_install() {
 		$qf -> values (array ('name' => $color_keys[$c], 'weight' => ($c+1), 'baseclr' => $clr));
 		$qc -> values (array ('name' => $color_keys[$c], 'family' => $color_keys[$c], 'shade' => 'pure', 'color' => $clr));
 		$qc -> values (array ('name' => $data['dark'], 'family' => $color_keys[$c], 'shade' => 'dark',  'color' => $clrd));
-		$qc -> values (array ('name' => $data['light'], 'family' => $color_keys[$c], 'shade' => 'pastel',  'color' => $clrl));
+		$qc -> values (array ('name' => $data['pastel'], 'family' => $color_keys[$c], 'shade' => 'pastel',  'color' => $clrl));
 	}
 	$qf->execute();
 	$qc->execute();
@@ -88,6 +94,10 @@ function sj_core_schema_colors(&$schema) {
 		  'type' => 'varchar',
 		  'size' => 16,
 		  'not null' => TRUE,
+		),
+		'description' => array (
+		  'type' => 'text',
+		  'not null' => FALSE,
 		),
 		'weight' => array(
 		  'type' => 'int',
@@ -118,6 +128,29 @@ function sj_core_schema_colors(&$schema) {
 		),
 	),
   );	
+	
+  $schema['sj_clrshades'] = array(
+	'description' => 'Color Shades',
+	'primary key' => array ('name'),
+	'fields' => array(
+		'name' => array(
+		  'type' => 'varchar',
+		  'size' => 16,
+		  'not null' => TRUE,
+		),
+		'math' => array(
+		  'type' => 'varchar',
+		  'size' => 32,
+		  'not null' => TRUE,
+		),		
+		'weight' => array(
+		  'type' => 'int',
+		  'size' => 2,
+		  'not null' => TRUE,
+		),
+	),
+  );		
+	
 	
   $schema['sj_clr'] = array(
 	'description' => 'Named colors',

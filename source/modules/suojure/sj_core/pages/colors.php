@@ -20,31 +20,37 @@ function dex_to_hex($dex) {
 function sj_core_pages_colors_form ($form, &$form_state) {
 	
 	drupal_add_css(drupal_get_path('module', 'sj_core').'/pages/colors.css');
-	
 	 
 	$clr_families = sjColorSet::GetColorFamilies();
+	$clr_shades = sjColorSet::GetColorShades();
 	$clrs = sjColorSet::GetPresetColors();
+	dpm($clr_shades);
 	
-	$shades = array('pastel', 'pure', 'dark');
 	foreach ($clr_families as $cf => $cbase) {
 		$clr_families[$cf] = array ('base' => $cbase);
 		foreach ($clrs as $c => $cdata) {
 			if ($cdata->family == $cf)
 				$clr_families[$cf][$cdata->shade] = array($c => $cdata->color);
-			if (!in_array($cdata->shade, $shades)) $shades[] = $cdata->shade;
+			if (!array_key_exists($cdata->shade, $clr_shades)) $clr_shades[$cdata->shade] = '';
 		}
 	}
-	//dpm($clr_families);
 
+/*
 	$t = '';
 	foreach ($clr_families as $cf => $cfdata) {	
 		$t .= '<tr><td>'.$cf.'</td>';
-		foreach ($shades as $sh)
+		foreach ($clr_shades as $sh => $shmath)
 			$t .= '<td style="background: #'.$cfdata[$sh][array_keys($cfdata[$sh])[0]].';">'.array_keys($cfdata[$sh])[0].'</td>';
 		$t .= '</tr>';
 	}
 	$t = '<table>'.$t.'</table>';
+*/
 
+	$form['shades'] = array (
+		'#type'=> 'fieldset',
+		'#title' => t('Shades'),
+		//'#prefix' => $t,
+	);
 
 	$form['colors'] = array (
 		'#type'=> 'fieldset',
@@ -52,21 +58,33 @@ function sj_core_pages_colors_form ($form, &$form_state) {
 		//'#prefix' => $t,
 	);
 
-	foreach ($clr_families as $f => $fdata) {
+	foreach ($clr_families as $f => $cfdata) {
 		$form['colors']['clrs_'.$f] = array (
 			'#type'=> 'fieldset',
 			'#title' => t(ucfirst($f).'s'),
-			'#prefix' => '<span class="swatch color-family '.$f.'"></span>',
 			'#attributes' => array('class' => array('color-family')),
 		);
+		$form['colors']['clrs_'.$f]['swatch'] = array (
+			'#markup' => '<span class="swatch" style="background: #'.$cfdata['base'].';"></span>',
+		);
 		
-		foreach ($shades as $sh) {
+		$form['colors']['clrs_'.$f]['clrs_'.$f.'_save'] = array (
+			'#type' => 'submit',
+			'#attributes' => array('class' => array('color-save-btn')),
+			'#value' => t('Save'),
+		);
+		
+		foreach ($clr_shades as $sh => $shmath) {
 			foreach ($cfdata[$sh] as $clrname => $clr) {
 				$form['colors']['clrs_'.$f]['clrs__'.$clrname] = array (
 					'#type'=> 'fieldset',
 					'#title' => t($clrname),
-					'#attributes' => array('class' => array('color-pane')),
+					'#attributes' => array('class' => array('color-pane'), 'style' => 'background: #'.$clr.';'),
 				);
+				$form['colors']['clrs_'.$f]['clrs__'.$clrname]['clrs__'.$clrname.'_shade'] = array (
+					'#markup'=> '<div class="shade-label">'.$sh.'</div>',
+				);
+
 				$form['colors']['clrs_'.$f]['clrs__'.$clrname]['clrs__'.$clrname.'_name'] = array (
 					'#type'=> 'textfield',
 					'#value' => $clrname,
@@ -82,7 +100,7 @@ function sj_core_pages_colors_form ($form, &$form_state) {
 		$form['colors']['clrs_'.$f]['clrs_'.$f.'_new'] = array (
 			'#type'=> 'fieldset',
 			'#title' => t('New Color'),
-			'#attributes' => array('class' => array('color-pane')),
+			'#attributes' => array('class' => array('color-pane color-pane-new')),
 		);
 		
 		$form['colors']['clrs_'.$f]['clrs_'.$f.'_new']['clrs_'.$f.'_new_name'] = array (
@@ -91,7 +109,7 @@ function sj_core_pages_colors_form ($form, &$form_state) {
 		);
 		$form['colors']['clrs_'.$f]['clrs_'.$f.'_new']['clrs_'.$f.'_new_color'] = array (
 			'#type'=> 'jquery_colorpicker',
-			'#default_value' => $fdata['base'],
+			'#default_value' => $cfdata['base'],
 			//'#title' => '+'.t('New Color'),
 		);
 		$form['colors']['clrs_'.$f]['clrs_'.$f.'_new']['clrs_'.$f.'_new_btn'] = array (
@@ -99,10 +117,7 @@ function sj_core_pages_colors_form ($form, &$form_state) {
 			'#value' => t('Add'),
 		);
 		
-		$form['colors']['clrs_'.$f]['clrs_'.$f.'_save'] = array (
-			'#type' => 'submit',
-			'#value' => t('Save'),
-		);
+
 	}
 
 	return $form;
