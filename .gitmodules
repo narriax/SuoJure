@@ -26,3 +26,15 @@
 	path = public_html/sites/all/modules/token
 	url = https://git.drupalcode.org/project/token.git
 	branch = 7.x-1.x
+[submodule "public_html/sites/all/modules/libraries"]
+	path = public_html/sites/all/modules/libraries
+	url = https://git.drupalcode.org/project/libraries.git
+	branch = 7.x-2.x
+[submodule "public_html/sites/all/modules/jquery_colorpicker"]
+	path = public_html/sites/all/modules/jquery_colorpicker
+	url = https://git.drupalcode.org/project/jquery_colorpicker.git
+	branch = 7.x-1.x
+[submodule "public_html/sites/all/modules/clear_cache"]
+	path = public_html/sites/all/modules/clear_cache
+	url = https://git.drupalcode.org/project/clear_cache.git
+	branch = 7.x-2.x

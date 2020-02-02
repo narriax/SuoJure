@@ -1,1 +1,13 @@
-/public_html/*
+/public_html/includes/*
+/public_html/misc/*
+/public_html/modules/*
+/public_html/profiles/*
+/public_html/scripts/*
+/public_html/themes/*
+/public_html/*.*
+
+/public_html/sites/README.txt
+/public_html/sites/example.sites.php
+
+/public_html/sites/all/modules/*
+/public_html/sites/all/themes/*
