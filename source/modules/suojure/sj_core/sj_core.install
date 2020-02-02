@@ -1,5 +1,20 @@
 <?php
 
+function dex_to_hex($dex) {
+	if ($dex < 0) return '0';
+	if ($dex > 15) return 'f';
+	$dex = round($dex);
+	switch ($dex) {
+		case 10: return 'a';
+		case 11: return 'b';
+		case 12: return 'c';
+		case 13: return 'd';
+		case 14: return 'e';
+		case 15: return 'f';
+		default: return $dex.'';
+	}
+}
+
 function sj_core_install() {
 	
 	$q = db_insert('sj_clrtype') -> fields(array ('name', 'weight'));
@@ -8,17 +23,52 @@ function sj_core_install() {
 	$q -> values (array ('name' => 'aux', 'weight' => 3));
 	$q->execute();
 
-	$q = db_insert('sj_clrfamily') -> fields(array ('name', 'weight'));
-	$q -> values (array ('name' => 'red', 'weight' => 1));
-	$q -> values (array ('name' => 'orange', 'weight' => 2));
-	$q -> values (array ('name' => 'yellow', 'weight' => 3));
-	$q -> values (array ('name' => 'green', 'weight' => 4));
-	$q -> values (array ('name' => 'teal', 'weight' => 5));
-	$q -> values (array ('name' => 'blue', 'weight' => 6));
-	$q -> values (array ('name' => 'purple', 'weight' => 7));
-	$q->execute();
+	$colors = array (
+		'red' => 	  array('base' => array(16, 0, 0), 	'dark' => 'maroon', 	'light'=>'rose'),
+		'orange' =>   array('base' => array(16, 9, 0), 	'dark' => 'brown', 		'light'=>'salmon'),
+		'yellow' =>   array('base' => array(16,16, 0), 	'dark' => 'bile', 		'light'=>'cream'),
+		'grass' => 	  array('base' => array(9,16, 0), 	'dark' => 'swamp', 		'light'=>'tea'),
+		'lime' => 	  array('base' => array( 0,16, 0), 	'dark' => 'green', 		'light'=>'eco'),
+		'leygreen' => array('base' => array( 0,16,10), 	'dark' => 'forest', 	'light'=>'aero'),
+		'cyan' => 	  array('base' => array( 0,14,16), 	'dark' => 'teal', 		'light'=>'ice'),
+		'sky' => 	  array('base' => array( 0,10,16), 	'dark' => 'sea', 		'light'=>'babyblue'),
+		'blue' => 	  array('base' => array( 0, 4,16), 	'dark' => 'navy', 		'light'=>'powder'),
+		'violet' =>   array('base' => array( 8, 0,16), 	'dark' => 'universe', 	'light'=>'lavender'),
+		'magenta' =>  array('base' => array(12, 0,16), 	'dark' => 'purple', 	'light'=>'lace'),
+		'wine' => 	  array('base' => array(16, 0, 10), 'dark' => 'purpura', 	'light'=>'pink'),
+	);
+	$color_keys = array_keys($colors);
+
+	$qf = db_insert('sj_clrfamily') -> fields(array ('name', 'baseclr', 'weight'));
+	$qc = db_insert('sj_clr') -> fields(array ('name', 'family', 'shade', 'color'));
 	
+	for ($c=0; $c < count($color_keys); $c++) {
+		$data = $colors[$color_keys[$c]];
+
+		$clr = '';
+		$clrl = '';
+		$clrd = '';
+		foreach ($data['base'] as $code) {
+			$n = max($code-1,0);
+			$m = max($data['base']);
+			
+			$clr .= dex_to_hex($n).dex_to_hex($n);
+			$clrd .= dex_to_hex($n/2).dex_to_hex($n/2);
+			$clrl .= dex_to_hex($n + ($m-$n)*0.6).dex_to_hex($n + ($m-$n)*0.6);
+		}
+
+		$qf -> values (array ('name' => $color_keys[$c], 'weight' => ($c+1), 'baseclr' => $clr));
+		$qc -> values (array ('name' => $color_keys[$c], 'family' => $color_keys[$c], 'shade' => 'pure', 'color' => $clr));
+		$qc -> values (array ('name' => $data['dark'], 'family' => $color_keys[$c], 'shade' => 'dark',  'color' => $clrd));
+		$qc -> values (array ('name' => $data['light'], 'family' => $color_keys[$c], 'shade' => 'pastel',  'color' => $clrl));
+	}
+	$qf->execute();
+	$qc->execute();
 }
+
+
+
+
 
 function sj_core_schema() {
   $schema = array();
@@ -56,11 +106,16 @@ function sj_core_schema_colors(&$schema) {
 		  'size' => 16,
 		  'not null' => TRUE,
 		),
+		'baseclr' => array(
+		  'type' => 'varchar',
+		  'size' => 6,
+		  'not null' => TRUE,
+		),		
 		'weight' => array(
 		  'type' => 'int',
 		  'size' => 2,
 		  'not null' => TRUE,
-		),		
+		),
 	),
   );	
 	
@@ -72,17 +127,22 @@ function sj_core_schema_colors(&$schema) {
 		  'type' => 'varchar',
 		  'size' => 16,
 		  'not null' => TRUE,
-		),
-		'family' => array (
-		  'type' => 'varchar',
-		  'size' => 16,
-		  'not null' => TRUE,
-		),		
+		),	
 		'color' => array(
 		  'type' => 'varchar',
 		  'size' => 6,
 		  'not null' => TRUE,
 		),
+		'family' => array (
+		  'type' => 'varchar',
+		  'size' => 16,
+		  'not null' => TRUE,
+		),
+		'shade' => array (
+		  'type' => 'varchar',
+		  'size' => 16,
+		  'not null' => TRUE,
+		),	
 	),
   );
   

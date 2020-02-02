@@ -8,16 +8,16 @@ class sjColorSet {
 	}
 	
 	static function GetColorFamilies() {
-		return db_select('sj_clrfamily', 'ct')->fields('ct', array('name'))->orderBy('weight')->execute()->fetchCol('name');
+		return db_select('sj_clrfamily', 'ct')->fields('ct', array('name', 'baseclr'))->orderBy('weight')->execute()->fetchAllKeyed(0,1);
 	}
 	
 	static function GetPresetColors() {
-		$q = db_select('sj_clr', 'c')->fields('c', array('name', 'color'));
+		$q = db_select('sj_clr', 'c')->fields('c', array('name', 'color', 'shade'));
 		$q->join('sj_clrfamily', 'cf', 'c.family=cf.name');
 		$q->addField('cf', 'name', 'family');
 		$q->addField('cf', 'weight', 'familyweight');
 		$q->orderBy('familyweight');
-		return $q->execute()->fetchAssoc('name');
+		return $q->execute()->fetchAllAssoc('name');
 	}
 	
 }
