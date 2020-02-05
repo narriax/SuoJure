@@ -1,30 +1,13 @@
 <?php
 
-/*
-function dex_to_hex($dex) {
-	if ($dex < 0) return '0';
-	if ($dex > 15) return 'f';
-	$dex = round($dex);
-	switch ($dex) {
-		case 10: return 'a';
-		case 11: return 'b';
-		case 12: return 'c';
-		case 13: return 'd';
-		case 14: return 'e';
-		case 15: return 'f';
-		default: return $dex.'';
-	}
-}*/
-
 
 function sj_core_pages_colors_form ($form, &$form_state) {
 	
 	drupal_add_css(drupal_get_path('module', 'sj_core').'/pages/colors.css');
 	 
 	$clr_families = sjColorSet::GetColorFamilies();
-	$clr_shades = sjColorSet::GetColorShades();
+	$clr_shades = sjColorSet::GetColorShades(true);
 	$clrs = sjColorSet::GetPresetColors();
-	dpm($clr_shades);
 	
 	foreach ($clr_families as $cf => $cbase) {
 		$clr_families[$cf] = array ('base' => $cbase);
@@ -34,23 +17,65 @@ function sj_core_pages_colors_form ($form, &$form_state) {
 			if (!array_key_exists($cdata->shade, $clr_shades)) $clr_shades[$cdata->shade] = '';
 		}
 	}
-
-/*
-	$t = '';
-	foreach ($clr_families as $cf => $cfdata) {	
-		$t .= '<tr><td>'.$cf.'</td>';
-		foreach ($clr_shades as $sh => $shmath)
-			$t .= '<td style="background: #'.$cfdata[$sh][array_keys($cfdata[$sh])[0]].';">'.array_keys($cfdata[$sh])[0].'</td>';
-		$t .= '</tr>';
-	}
-	$t = '<table>'.$t.'</table>';
-*/
+	
+	
 
 	$form['shades'] = array (
 		'#type'=> 'fieldset',
 		'#title' => t('Shades'),
 		//'#prefix' => $t,
 	);
+	$form['shades']['swatch'] = array (
+		'#markup' => '<span class="swatch">&nbsp;</span>',
+	);	
+	
+	foreach ($clr_shades as $sh => $sh_data) {
+		$shmath =  $sh_data->math.'';
+		$clr1 = sjColorSet::AlterColor('00bbff', $sh_data->math);
+		$clr2 = sjColorSet::AlterColor('ffbb00', $sh_data->math);
+		
+		$form['shades']['shade_'.$sh] = array (
+			'#type'=> 'fieldset',
+			'#title' => '<font color=#'.sjColorSet::LabelColor($clr1).'>'.t(ucfirst($sh)).'</font>',
+			'#attributes' => array(
+				'class' => array('color-pane'), 
+				'style' => 'background: linear-gradient(#'.$clr1.',#'.$clr2.');'),
+		);	
+		$form['shades']['shade_'.$sh]['shade_'.$sh.'_math'] = array (
+			'#type'=> 'textfield',
+			'#default_value' => $sh_data->math,
+		);
+		$form['shades']['shade_'.$sh]['shade_'.$sh.'_weight'] = array (
+			'#type'=> 'textfield',
+			'#default_value' => $sh_data->weight,
+		);		
+	}
+
+	
+	$form['shades']['_new_shade'] = array (
+		'#type'=> 'fieldset',
+		'#title' => t('New Shade'),
+		'#attributes' => array('class' => array('color-pane color-pane-new')),
+	);
+	
+	$form['shades']['_new_shade']['_new_shade_name'] = array (
+		'#type'=> 'textfield',
+	);
+	$form['shades']['_new_shade']['_new_shade_btn'] = array (
+		'#type'=> 'button',
+		'#value' => t('Add Shade'),
+	);
+	
+	$form['shades']['shade_save_btn'] = array (
+		'#type'=> 'submit',
+		'#value' => t('Save Shade Changes'),
+		'#prefix' => '<div style="clear:both;">',
+		'#suffix' => '</div>',
+	);	
+	
+	
+	
+	
 
 	$form['colors'] = array (
 		'#type'=> 'fieldset',
@@ -64,39 +89,52 @@ function sj_core_pages_colors_form ($form, &$form_state) {
 			'#title' => t(ucfirst($f).'s'),
 			'#attributes' => array('class' => array('color-family')),
 		);
+
 		$form['colors']['clrs_'.$f]['swatch'] = array (
 			'#markup' => '<span class="swatch" style="background: #'.$cfdata['base'].';"></span>',
 		);
 		
 		$form['colors']['clrs_'.$f]['clrs_'.$f.'_save'] = array (
-			'#type' => 'submit',
+			'#type' => 'button',
 			'#attributes' => array('class' => array('color-save-btn')),
 			'#value' => t('Save'),
 		);
 		
-		foreach ($clr_shades as $sh => $shmath) {
+		foreach ($clr_shades as $sh => $sh_data) {
+			$shmath = $sh_data->math;
+			if (!array_key_exists($sh, $cfdata)) {
+				$cfdata[$sh] = array('' => '');
+			}
 			foreach ($cfdata[$sh] as $clrname => $clr) {
-				$form['colors']['clrs_'.$f]['clrs__'.$clrname] = array (
+				if (empty($clr))
+					$clr = sjColorSet::AlterColor($cfdata['base'], $shmath);
+							
+				$clid = 'clrs_'.$f.'_'.$sh.'_'.$clrname;
+							
+				$form['colors']['clrs_'.$f][$clid] = array (
 					'#type'=> 'fieldset',
-					'#title' => t($clrname),
+					'#title' => '<font color="'.sjColorSet::LabelColor($clr).'">'.t($clrname).'</font>',
 					'#attributes' => array('class' => array('color-pane'), 'style' => 'background: #'.$clr.';'),
 				);
-				$form['colors']['clrs_'.$f]['clrs__'.$clrname]['clrs__'.$clrname.'_shade'] = array (
+				$form['colors']['clrs_'.$f][$clid][$clid.'_shade'] = array (
 					'#markup'=> '<div class="shade-label">'.$sh.'</div>',
 				);
 
-				$form['colors']['clrs_'.$f]['clrs__'.$clrname]['clrs__'.$clrname.'_name'] = array (
+				$form['colors']['clrs_'.$f][$clid][$clid.'_name'] = array (
 					'#type'=> 'textfield',
 					'#value' => $clrname,
 				);
-				$form['colors']['clrs_'.$f]['clrs__'.$clrname]['clrs__'.$clrname.'_color'] = array (
+				/*
+				$form['colors']['clrs_'.$f][$clid][$clid.'_color'] = array (
 					'#type'=> 'jquery_colorpicker',
 					'#default_value' => $clr,
 					'#value' => $clr,
 				);
+				*/
 			}
 		}
 		
+		/*
 		$form['colors']['clrs_'.$f]['clrs_'.$f.'_new'] = array (
 			'#type'=> 'fieldset',
 			'#title' => t('New Color'),
@@ -113,10 +151,12 @@ function sj_core_pages_colors_form ($form, &$form_state) {
 			//'#title' => '+'.t('New Color'),
 		);
 		$form['colors']['clrs_'.$f]['clrs_'.$f.'_new']['clrs_'.$f.'_new_btn'] = array (
-			'#type'=> 'submit',
+			'#type'=> 'button',
 			'#value' => t('Add'),
+			'#attributes' => array ('disabled' => 'disabled'),
+			'#suffix' => '<font color=red>#TODO</font>',
 		);
-		
+		*/
 
 	}
 
@@ -125,46 +165,109 @@ function sj_core_pages_colors_form ($form, &$form_state) {
 
 
 function sj_core_pages_colors_form_validate ($form, &$form_state) {
-	dpm($form_state['values']);
-	$changes = array();
-	$name_el = '';
-	$color_el = '';
-	
-	$clr_families = sjColorSet::GetColorFamilies();
-	foreach ($clr_families as $f => $fbase) {
-		if ($form_state['triggering_element']['#id'] == 'edit-clrs-'.$f.'-new-btn') {
-			$changes['action'] = 'add';
-			$changes['family'] = $f;
-			$name_el = 'clrs_'.$f.'_new_name';
-			$color_el = 'clrs_'.$f.'_new_color';
-			break;
-		} else if ($form_state['triggering_element']['#id'] == 'edit-clrs-'.$f.'-save') {
-			$changes['action'] = 'edit';
-			$changes['family'] = $f;
-			break;
-		}
-	}
-	
-	if (empty($changes) || empty($color_el) || empty($name_el)) {
-		form_set_error('', t('Nothing to save'));
-		return false;
-	}
-	
-	$changes['name_el'] = $name_el;
-	$changes['color_el'] = $color_el;
-	$changes['name'] = $form_state['values'][$name_el];
-	$changes['color'] = $form_state['values'][$color_el];
-	$errpath = 'colors][clrs_'.$changes['family'].'][clrs_'.$changes['family'].'_new][';
-	if (empty($form_state['values'][$name_el])) {
-		form_set_error($errpath.$name_el, t('Name cannot be empty'));
-	}
-	
-	dpm($changes);
-	
-}
+	drupal_add_css(drupal_get_path('module', 'sj_core').'/pages/colors.css');
 
+	//dpm($form_state['triggering_element']);
+	if ($form_state['triggering_element']['#id'] == 'edit-new-shade-btn') {
+		sj_core_pages_colors_form_newshade_validate ($form, $form_state);
+	} if ($form_state['triggering_element']['#id'] == 'edit-shade-save-btn') {
+		sj_core_pages_colors_form_saveshades_validate ($form, $form_state);
+	} else {
+
+		dpm($form_state['values']);
+		$changes = array();
+		$name_el = '';
+		$color_el = '';
+	
+		$clr_families = sjColorSet::GetColorFamilies();
+		foreach ($clr_families as $f => $fbase) {
+			if ($form_state['triggering_element']['#id'] == 'edit-clrs-'.$f.'-new-btn') {
+				$changes['action'] = 'add';
+				$changes['family'] = $f;
+				$name_el = 'clrs_'.$f.'_new_name';
+				$color_el = 'clrs_'.$f.'_new_color';
+				break;
+			} else if ($form_state['triggering_element']['#id'] == 'edit-clrs-'.$f.'-save') {
+				$changes['action'] = 'edit';
+				$changes['family'] = $f;
+				break;
+			}
+		}
+		
+		if (empty($changes) || empty($color_el) || empty($name_el)) {
+			form_set_error('', t('Nothing to save'));
+			return false;
+		}
+		
+		$changes['name_el'] = $name_el;
+		$changes['color_el'] = $color_el;
+		$changes['name'] = $form_state['values'][$name_el];
+		$changes['color'] = $form_state['values'][$color_el];
+		$errpath = 'colors][clrs_'.$changes['family'].'][clrs_'.$changes['family'].'_new][';
+		if (empty($form_state['values'][$name_el])) {
+			form_set_error($errpath.$name_el, t('Name cannot be empty'));
+		}
+		
+		dpm($changes);
+	}
+}
 
 function sj_core_pages_colors_form_submit ($form, &$form_state) {
-	//dpm($form_state['triggering_element']);
 
 }
+
+
+
+function sj_core_pages_colors_form_newshade_validate ($form, &$form_state) {
+
+	//dpm($form_state['triggering_element']);
+	if ($form_state['triggering_element']['#id'] != 'edit-new-shade-btn') {
+		form_set_error('shades][_new_shade][_new_shade_btn', t('Wrong action'));
+	}
+	
+	$newName = trim(strtolower($form_state['values']['_new_shade_name']));
+	$clr_shades = sjColorSet::GetColorShades();
+	$form_state['values']['_new_shade_weight'] = 999;
+	$form_state['values']['_new_shade_math'] = '';
+		
+	if (empty($newName)) {
+		form_set_error('shades][_new_shade][_new_shade_name', t('Name cannot be empty'));
+	} else if (array_key_exists($newName, $clr_shades)) {
+			form_set_error('shades][_new_shade][_new_shade_name', t('Name already exists'));
+	} else {
+		sj_core_pages_colors_form_newshade_submit($form, $form_state);
+	}
+}
+
+function sj_core_pages_colors_form_newshade_submit ($form, &$form_state) {
+	if ($form_state['triggering_element']['#id'] == 'edit-new-shade-btn') {
+		$newName = $form_state['values']['_new_shade_name'];
+		$newWeight = $form_state['values']['_new_shade_weight'];
+		$newMath = $form_state['values']['_new_shade_math'];
+		
+		$q = db_insert('sj_clrshades')->fields(array('name', 'math', 'weight'))->values(array($newName, $newMath, $newWeight));
+		$q->execute();
+	}
+}
+
+
+
+function sj_core_pages_colors_form_saveshades_validate ($form, &$form_state) {
+	$clr_shades = sjColorSet::GetColorShades(true);
+	foreach ($clr_shades as $sh => $sh_data) {		
+		$newval = $form_state['values']['shade_'.$sh.'_math'];
+		$newweight = $form_state['values']['shade_'.$sh.'_weight'];
+		
+		if ($newval != $sh_data->math || $newweight != $sh_data->weight) {
+			$q = db_update('sj_clrshades')
+				-> fields (array(
+					'math' => $newval,
+					'weight' => $newweight,
+				))
+				-> condition ('name', $sh);
+			$q -> execute();
+		}
+	}
+}
+
+

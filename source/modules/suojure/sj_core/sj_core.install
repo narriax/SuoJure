@@ -24,9 +24,17 @@ function sj_core_install() {
 	$q->execute();
 	
 	$q = db_insert('sj_clrshades') -> fields(array ('name', 'math', 'weight'));
-	$q -> values (array ('name' => 'pastel', 'math' => '', 'weight' => 25));
-	$q -> values (array ('name' => 'pure', 'math' => '', 'weight' => 50));
-	$q -> values (array ('name' => 'dark', 'math' => '', 'weight' => 75));
+	$q -> values (array ('name' => 'offwhite', 'math' => 'n+(max-n)*0.85', 'weight' => 10));
+	$q -> values (array ('name' => 'pastel', 'math' => 'n+(max-n)*0.6', 'weight' => 20));
+	$q -> values (array ('name' => 'pure', 'math' => '', 'weight' => 30));
+	$q -> values (array ('name' => 'gem', 'math' => 'n/2', 'weight' => 40));
+	$q -> values (array ('name' => 'dark', 'math' => 'n/4', 'weight' => 50));
+	$q -> values (array ('name' => 'deep', 'math' => 'n/8', 'weight' => 60));
+	
+	$q -> values (array ('name' => 'suede', 'math' => 'n/15+max/10', 'weight' => 70));
+	$q -> values (array ('name' => 'drab', 'math' => 'n/15+max/4', 'weight' => 80));
+	$q -> values (array ('name' => 'soft', 'math' => 'n/15+max/2', 'weight' => 90));
+	$q -> values (array ('name' => 'light', 'math' => 'n/15+max/1.5', 'weight' => 100));
 	$q->execute();	
 
 	$colors = array (
@@ -41,7 +49,8 @@ function sj_core_install() {
 		'blue' => 	  array('base' => array( 0, 4,16), 	'dark' => 'navy', 		'pastel'=>'powder'),
 		'violet' =>   array('base' => array( 8, 0,16), 	'dark' => 'universe', 	'pastel'=>'lavender'),
 		'magenta' =>  array('base' => array(12, 0,16), 	'dark' => 'purple', 	'pastel'=>'lace'),
-		'fuchsia' =>  array('base' => array(16, 0, 10), 'dark' => 'wine', 		'pastel'=>'pink'),
+		'fuchsia' =>  array('base' => array(16, 0,10),  'dark' => 'wine', 		'pastel'=>'pink'),
+		'white' =>    array('base' => array(16,16,16),  'dark' => 'gray'),
 	);
 	$color_keys = array_keys($colors);
 
@@ -59,9 +68,9 @@ function sj_core_install() {
 			$m = max($data['base']);
 			
 			$clr .= dex_to_hex($n).dex_to_hex($n);
-			$clrd .= dex_to_hex($n/2).dex_to_hex($n/2);
-			$clrl .= dex_to_hex($n + ($m-$n)*0.6).dex_to_hex($n + ($m-$n)*0.6);
-		}
+			$clrd .= '';//dex_to_hex($n/2).dex_to_hex($n/2);
+			$clrl .= '';//dex_to_hex($n + ($m-$n)*0.6).dex_to_hex($n + ($m-$n)*0.6);
+		} 
 
 		$qf -> values (array ('name' => $color_keys[$c], 'weight' => ($c+1), 'baseclr' => $clr));
 		$qc -> values (array ('name' => $color_keys[$c], 'family' => $color_keys[$c], 'shade' => 'pure', 'color' => $clr));

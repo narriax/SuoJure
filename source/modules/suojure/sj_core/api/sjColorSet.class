@@ -14,8 +14,11 @@ class sjColorSet {
 		return db_select('sj_clrfamily', 'ct')->fields('ct', array('name', 'baseclr'))->orderBy('weight')->execute()->fetchAllKeyed(0,1);
 	}
 	
-	static function GetColorShades() {
-		return db_select('sj_clrshades', 'cs')->fields('cs', array('name', 'math'))->orderBy('weight')->execute()->fetchAllKeyed(0,1);
+	static function GetColorShades($full = false) {
+		if ($full)
+			return db_select('sj_clrshades', 'cs')->fields('cs', array())->orderBy('weight')->execute()->fetchAllAssoc('name');
+		else 
+			return db_select('sj_clrshades', 'cs')->fields('cs', array('name', 'math'))->orderBy('weight')->execute()->fetchAllKeyed(0,1);
 	}	
 	
 	static function GetPresetColors() {
@@ -25,6 +28,91 @@ class sjColorSet {
 		$q->addField('cf', 'weight', 'familyweight');
 		$q->orderBy('cf.weight');
 		return $q->execute()->fetchAllAssoc('name');
+	}
+	
+	
+	static function rgb_to_hex ($rgb) {
+		$clr = '';
+		for ($i=0; $i < 3; $i++) {		
+			$a = floor($rgb[$i] / 16);
+			$b = $rgb[$i] % 16;
+			$clr .= sjColorSet::dex_to_hex($a) . sjColorSet::dex_to_hex($b);
+		}
+		return $clr;
+	}
+	
+	static function hex_to_rgb ($hex) {
+		$hex = str_replace('#','',$hex);
+		$rgb = array();
+		if (strlen($hex) == 3) {
+			$d = array(sjColorSet::hex_to_dex($hex[0]));
+			$rgb[0] = $d * 16 + $d;
+			$d = array(sjColorSet::hex_to_dex($hex[1]));
+			$rgb[1] = $d * 16 + $d;
+			$d = array(sjColorSet::hex_to_dex($hex[2]));
+			$rgb[2] = $d * 16 + $d;
+		} else {
+			$rgb = array(
+				sjColorSet::hex_to_dex($hex[0]) * 16 + sjColorSet::hex_to_dex($hex[1]),
+				sjColorSet::hex_to_dex($hex[2]) * 16 + sjColorSet::hex_to_dex($hex[3]),
+				sjColorSet::hex_to_dex($hex[4]) * 16 + sjColorSet::hex_to_dex($hex[5]),
+			);
+		}
+		return $rgb;
+	}
+	
+	static function dex_to_hex($dex) {
+		if ($dex < 0) return '0';
+		if ($dex > 15) return 'f';
+		$dex = round($dex);
+		switch ($dex) {
+			case 10: return 'a';
+			case 11: return 'b';
+			case 12: return 'c';
+			case 13: return 'd';
+			case 14: return 'e';
+			case 15: return 'f';
+			default: return $dex.'';
+		}
+	}
+	static function hex_to_dex($hex) {
+		$hex = strtolower($hex);
+		switch ($hex) {
+			case 'a': return 10;
+			case 'b': return 11;
+			case 'c': return 12;
+			case 'd': return 13;
+			case 'e': return 14;
+			case 'f': return 15;
+			default: 
+				return $hex-0;
+		}
+	}
+	
+	static function AlterColor ($orig, $math) {
+		if (empty($math)) return $orig;
+		
+		$rgb = sjColorSet::hex_to_rgb($orig);
+		$math = str_replace('max', max($rgb).'', $math);
+		$math = str_replace('min', min($rgb).'', $math);
+		$clr = '';
+		for ($i=0; $i < 3; $i++) {
+			$z = $rgb[$i];
+			$eval = str_replace('n', $rgb[$i], $math);
+			eval('$rgb[$i]=round('.$eval.');');				
+		}
+		
+		return sjColorSet::rgb_to_hex($rgb);
+	}
+	
+	
+	static function LabelColor ($base) {
+		$rgb = sjColorSet::hex_to_rgb($base);
+		$max = max ($rgb);
+		if ($max > 150)
+			return '000000';
+		else 
+			return 'ffffff';
 	}
 	
 }
