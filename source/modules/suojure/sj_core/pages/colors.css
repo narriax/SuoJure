@@ -17,7 +17,6 @@
 .color-pane.form-wrapper {
 	display: inline-block;
 	position:relative;
-	float: left;
 	height: 90px;
 }
 
@@ -37,6 +36,31 @@
 	display: inline-block;
 	margin-right: 5px;
 	float: left;
+}
+
+#edit-shades {
+	
+}
+#edit-shades .fieldset-wrapper {
+	height: 100%;
+	position: relative;
+}
+#edit-shades .controls-group {
+	display: block;
+	position: relative;
+	text-align: center;
+}
+.controls-group div {
+	display: inline-block;
+	width: 45%;
+}
+.controls-group .form-item {
+	display: inline-block;
+	position: relative;
+	float: none;
+}
+.controls-group .form-type-textfield input {
+	max-width: 12em;
 }
 .color-family {
 	padding-left:3em;

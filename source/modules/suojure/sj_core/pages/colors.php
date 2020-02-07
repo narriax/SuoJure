@@ -23,10 +23,9 @@ function sj_core_pages_colors_form ($form, &$form_state) {
 	$form['shades'] = array (
 		'#type'=> 'fieldset',
 		'#title' => t('Shades'),
-		//'#prefix' => $t,
 	);
 	$form['shades']['swatch'] = array (
-		'#markup' => '<span class="swatch">&nbsp;</span>',
+		'#markup' => '<span class="swatch">&nbsp;</span> &nbsp; ',
 	);	
 	
 	foreach ($clr_shades as $sh => $sh_data) {
@@ -51,28 +50,31 @@ function sj_core_pages_colors_form ($form, &$form_state) {
 		);		
 	}
 
-	
-	$form['shades']['_new_shade'] = array (
-		'#type'=> 'fieldset',
-		'#title' => t('New Shade'),
-		'#attributes' => array('class' => array('color-pane color-pane-new')),
-	);
-	
-	$form['shades']['_new_shade']['_new_shade_name'] = array (
-		'#type'=> 'textfield',
-	);
-	$form['shades']['_new_shade']['_new_shade_btn'] = array (
-		'#type'=> 'button',
-		'#value' => t('Add Shade'),
+	$form['shades']['__shade_controls_start'] = array (
+		'#markup'=> '<div class="controls-group shades">&nbsp;<div style="text-align: left;">&nbsp; ',
 	);
 	
 	$form['shades']['shade_save_btn'] = array (
 		'#type'=> 'submit',
 		'#value' => t('Save Shade Changes'),
-		'#prefix' => '<div style="clear:both;">',
-		'#suffix' => '</div>',
+
 	);	
 	
+	$form['shades']['_new_shade_name'] = array (
+		'#title' => t('New Shade'),
+		'#type'=> 'textfield',
+		'#prefix' => '</div><div style="text-align: right;">',
+	);
+	$form['shades']['_new_shade_btn'] = array (
+		'#type'=> 'button',
+		'#value' => t('Add Shade'),
+		'#suffix' => '</div>',
+	);
+	
+
+	$form['shades']['__shade_controls_end'] = array (
+		'#markup'=> '&nbsp;</div>',
+	);
 	
 	
 	
