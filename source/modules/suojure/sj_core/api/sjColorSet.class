@@ -21,12 +21,17 @@ class sjColorSet {
 			return db_select('sj_clrshades', 'cs')->fields('cs', array('name', 'math'))->orderBy('weight')->execute()->fetchAllKeyed(0,1);
 	}	
 	
-	static function GetPresetColors() {
-		$q = db_select('sj_clr', 'c')->fields('c', array('name', 'color', 'shade'));
+	static function GetPresetColors($family = '') {
+		$q = db_select('sj_clr', 'c')
+		   ->fields('c', array('name', 'color', 'shade'));		   
 		$q->join('sj_clrfamily', 'cf', 'c.family=cf.name');
 		$q->addField('cf', 'name', 'family');
 		$q->addField('cf', 'weight', 'familyweight');
 		$q->orderBy('cf.weight');
+		
+		if (!empty($family))
+			$q->condition('c.family', $family);
+		
 		return $q->execute()->fetchAllAssoc('name');
 	}
 	

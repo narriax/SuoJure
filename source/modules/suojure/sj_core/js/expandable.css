@@ -1,0 +1,18 @@
+
+.expandable.hide .expandable-content,
+.expandable.show .expandable-reverse {
+	display: none;
+}
+.expandable.show .expandable-content,
+.expandable.hide .expandable-reverse {
+	display: initial;
+}
+
+.expandable-button {
+	color: silver;
+	font-style: italic;
+	cursor: pointer;
+}
+.expandable-button:hover {
+	color: gray;
+}

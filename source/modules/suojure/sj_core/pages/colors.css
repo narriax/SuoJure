@@ -38,6 +38,13 @@
 	float: left;
 }
 
+
+
+.expandable-button {
+	position: absolute;
+	right: 2em;
+}
+
 #edit-shades {
 	
 }
