@@ -3,5 +3,4 @@ description = Manage private projects
 core = 7.x
 
 package = Narriax: Suo Jure
-dependencies[] = entity
-dependencies[] = jquery_colorpicker
+1dependencies[] = jquery_colorpicker

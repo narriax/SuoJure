@@ -1,0 +1,39 @@
+.half-pane {
+	display: inline-block;
+	width: 47%;
+	padding: 1em;
+	vertical-align: top;
+	position:relative;
+}
+.half-pane .form-wrapper {
+	display: block;
+}
+.half-pane .form-wrapper div,
+.half-pane .form-wrapper span,
+.half-pane .form-wrapper input {
+	max-width: 80% !important;
+}
+
+.blurb {
+	margin: 2em;
+}
+
+.blurb.no-content {
+	color: gray;
+	font-style: italic;
+}
+
+
+.flex-table .fieldset-wrapper {
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  overflow: hidden;
+}
+
+.flex-table .flex-col {
+	flex: 1;
+}
+.flex-table .flex-col .fieldset-wrapper {
+	display: block;
+}

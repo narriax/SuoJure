@@ -1,11 +1,10 @@
 <?php
 
-
 function sj_core_personas_block () {
 	if (!user_access('access content')) 
 		return '';
 	
-	drupal_add_css(drupal_get_path('module', 'sj_core').'/blocks/personas.css');
+	drupal_add_css(drupal_get_path('module', 'sj_core').'/blocks/block_personas.css');
 	
 	$usr = new sjUser();
 	if (!isset($usr)) 
@@ -18,7 +17,7 @@ function sj_core_personas_block () {
 	}
 	
 	$currents = array(
-		'personas' => sjvar('persona', $usr->get_default_persona()),
+		'personas' => '?persona='.sjvar('persona', $usr->get_default_persona()),
 	);
 
 	// ======================
@@ -39,9 +38,10 @@ function sj_core_personas_block () {
 		'personas' => array (),
 	);
 	foreach ($usr->personas as $pgrp => $ps) {
-		$links['personas'][$pgrp] = array();
-		foreach ($ps as $pname => $pdata) {
-			$links['personas'][$pgrp]['?persona='.$pname] = array ('#text' => $pname);
+		if (empty($ps->members)) continue;
+		$links['personas'][$ps->name] = array();
+		foreach ($ps->members as $pid => $pdata) {
+			$links['personas'][$ps->name]['?persona='.$pid] = array ('#text' => $pdata->name);
 		}
 	}
 	if (count($links['personas']) > 0) {
@@ -78,7 +78,7 @@ function sj_core_personas_block () {
 
 				$cls = 'menu-link';
 				if (!empty($linkicon)) $cls .= ' has-icon';
-				if (array_key_exists($menuname, $currents) && $currents[$menuname] == $linktext)
+				if (array_key_exists($menuname, $currents) && $currents[$menuname] == $linkurl)
 					$cls .= ' selected';
 				
 				

@@ -2,8 +2,8 @@
 
 
 function sj_core_pages_colors_form ($form, &$form_state) {
-	
-	drupal_add_css(drupal_get_path('module', 'sj_core').'/pages/colors.css');
+
+	sj_core_load_css('colors', 'form');
 	 
 	$clr_families = sjColorSet::get_color_families();
 	$clr_shades = sjColorSet::get_color_shades(true);
@@ -47,6 +47,7 @@ function sj_core_pages_colors_form ($form, &$form_state) {
 			);	
 			$form['shades']['shade_'.$sh]['shade_'.$sh.'_math'] = array (
 				'#type'=> 'textfield',
+				'#maxlength' => 32,
 				'#default_value' => $sh_data->math,
 			);
 			$form['shades']['shade_'.$sh]['shade_'.$sh.'_weight'] = array (
@@ -68,6 +69,7 @@ function sj_core_pages_colors_form ($form, &$form_state) {
 		$form['shades']['_new_shade_name'] = array (
 			'#title' => t('New Shade'),
 			'#type'=> 'textfield',
+			'#maxlength' => 16,
 			'#prefix' => '</div><div style="text-align: right;">',
 		);
 		$form['shades']['_new_shade_btn'] = array (
@@ -96,6 +98,7 @@ function sj_core_pages_colors_form ($form, &$form_state) {
 		foreach ($clr_families as $f => $cfdata) {
 			$form['colors']['clrs_'.$f] = array (
 				'#type'=> 'fieldset',
+				'#maxlength' => 16,
 				'#title' => t(ucfirst($f).'s'),
 				'#attributes' => array('class' => array('color-family')),
 			);

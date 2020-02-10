@@ -21,9 +21,7 @@ function sj_core_help($path, $arg) {
 module_load_include ('config', 'sj_core', 'sj_db_tables');
 
 // drupal hooks
-module_load_include ('inc', 'sj_core', 'hooks/permission');
-module_load_include ('inc', 'sj_core', 'hooks/menu');
-module_load_include ('inc', 'sj_core', 'hooks/entity_info');
+sj_core_load_all_hooks('sj_core');
 
 // api
 module_load_include ('class', 'sj_core', 'api/sjColorSet');
@@ -33,33 +31,14 @@ module_load_include ('class', 'sj_core', 'api/sjUser');
 module_load_include ('inc', 'sj_core', 'sj_core_lib');
 
 
-
-/**
- * Implements hook_block_info().
- */
-function sj_core_block_info() {
-  $blocks['sj_core_personas'] = array(
-    // The name that will appear in the block list.
-    'info' => t('SuoJure: Personas'),
-    // Default setting.
-    'cache' => DRUPAL_CACHE_PER_ROLE,
-  );
-  return $blocks;
+function sj_core_load_all_hooks ($module) {
+	$hooks = scandir(drupal_get_path('module', $module).'/hooks');
+	foreach ($hooks as $hook) {
+		if ($hook === '.' || $hook === '..') continue;
+		$tokens = explode('.', $hook);
+		module_load_include ($tokens[1], $module, 'hooks/'.$tokens[0]);
+	}
 }
 
-/**
- * Implements hook_block_view().
- */
-function sj_core_block_view($delta = '') {
-  switch ($delta) {
-  case 'sj_core_personas':
-    module_load_include ('inc', 'sj_core', 'blocks/personas');
-    
-	$block['subject'] = t('SuoJure: Personas');
-    $block['content'] = sj_core_personas_block();
-  }
-
-  return $block;
-}
 
 

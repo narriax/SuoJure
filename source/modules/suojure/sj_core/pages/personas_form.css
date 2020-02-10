@@ -1,0 +1,70 @@
+#sj-core-pages-personas-form .form-type-textfield input {	
+	max-width: 10em;
+}
+
+.section-groups,
+.section-groups  .fieldset-wrapper {
+	border: 0;
+	margin: 0;
+	padding: 0;
+}
+
+hr {
+	margin: 1em 0;
+}
+
+.persona-group-list {
+	margin-top: 2em;
+}
+.persona-group-list fieldset,
+.persona-group-list fieldset .fieldset-wrapper {
+	padding: 0;
+	margin: 0;
+	border: 0;
+	display: block;
+}
+.persona-group-list label,
+.persona-group-list .form-item,
+.persona-group-list .form-type-links {
+	display: inline-block;
+}
+.persona-group-list label,
+.persona-group-list .form-type-links {
+	width: 10em;
+}
+.persona-group-list .form-type-links {
+	margin-left: 2em;
+}
+.persona-group-list .form-submit {
+	margin-top:2em;
+}
+.persona-group-list .form-item {
+	margin: 0 2em;
+}
+
+
+fieldset.persona-group {
+	display: table-cell;
+	vertical-align: top;
+	width: 15em;
+	margin: 0.25em;
+	margin-bottom: 2em;
+}
+fieldset.persona-group .fieldset-wrapper {
+	margin: 0.5em 0;
+	padding: 0.25em;
+}
+fieldset.persona-group .persona-line {
+	padding: 0;
+	border: 0;
+	margin: 0.25em 0;
+}
+fieldset.persona-group .persona-line .fieldset-wrapper {
+	margin: 0 0.25em;
+}
+fieldset.persona-group .persona-line .form-item {
+	border: 0;
+	margin: 0 4px;
+	display: inline-block;
+}
+

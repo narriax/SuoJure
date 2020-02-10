@@ -117,23 +117,42 @@ class sjUser {
 	// personas ======================================
 	
 	public function load_personas() {
-		$q = db_select('sj_user_persona', 'up')
-			-> fields('up', array()) 
-			-> condition('up.username', $this->username)
-			-> orderBy('up.weight');
-		$raw = $q->execute()->fetchAll();
-		
+
+		$q = db_select('sj_user_prsgroup', 'upg')
+		   -> fields('upg', array())
+		   -> condition('upg.username', $this->username)
+		   -> orderBy('upg.weight');	
+		$grps_raw = $q -> execute() -> fetchAll();
+		   
 		$this->personas = array();
+		$this->personas[-1] = new stdClass();
+		$this->personas[-1]->id = -1;
+		$this->personas[-1]->name = '';
+		$this->personas[-1]->members = array();
+		foreach ($grps_raw as $r) {
+			$this->personas[$r->id]= $r;
+			$this->personas[$r->id]->members = array();
+		}		   
+		   
+		$q = db_select('sj_user_persona', 'usp')
+		   -> fields('usp', array())
+		   -> condition('usp.username', $this->username)
+		   -> orderBy('usp.weight');	
+		$raw = $q->execute()->fetchAll();
+
 		foreach ($raw as $r) {
-			if (!array_key_exists($r->grp, $this->personas))
-				$this->personas[$r->grp] = array();
-			$this->personas[$r->grp][$r->name] = $r;
+			if (!isset($r->grp) || !array_key_exists($r->grp, $this->personas)) {
+				$r->grp = -1;
+			}				
+			
+			$this->personas[$r->grp]->members[$r->id] = $r;
 		}
 	}	
 
 	public function get_default_persona () {
-		foreach ($this->personas as $grp => $members) {
-			return array_keys($members)[0];
+		foreach ($this->personas as $grp => $grpdata) {
+			if (empty($grpdata->members)) continue;
+			return array_keys($grpdata->members)[0];
 		}
 		return '';
 	}

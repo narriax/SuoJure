@@ -101,3 +101,7 @@ function generate_new_uoid ($for_tables = array(), $min_digits = 4, $max_digits 
     return $try_me;
 }
 
+function timestamp_sql () {
+	return date('Y-m-d H:i:s');
+}
+
