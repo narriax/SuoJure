@@ -25,35 +25,28 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Table structure for table `sj_clrfamily`
+-- Table structure for table `sj_user_prsgroup`
 --
 
-DROP TABLE IF EXISTS `sj_clrfamily`;
-CREATE TABLE IF NOT EXISTS `sj_clrfamily` (
+DROP TABLE IF EXISTS `sj_user_prsgroup`;
+CREATE TABLE IF NOT EXISTS `sj_user_prsgroup` (
+  `id` int(4) NOT NULL,
+  `username` varchar(16) NOT NULL,
   `name` varchar(16) NOT NULL,
-  `weight` int(2) NOT NULL,
-  `baseclr` varchar(6) NOT NULL,
-  PRIMARY KEY (`name`)
+  `weight` int(2) NOT NULL DEFAULT '99',
+  `date_created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `date_last_modified` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `sj_clrfamily`
+-- Dumping data for table `sj_user_prsgroup`
 --
 
-INSERT INTO `sj_clrfamily` (`name`, `weight`, `baseclr`) VALUES
-('red', 1, 'ff0000'),
-('orange', 2, 'ff8800'),
-('yellow', 3, 'ffff00'),
-('grass', 4, '88ff00'),
-('lime', 5, '00ff00'),
-('leygreen', 6, '00ff88'),
-('cyan', 7, '00ffff'),
-('sky', 8, '0099ff'),
-('blue', 9, '0022ff'),
-('violet', 10, '7700ff'),
-('magenta', 11, 'bb00ff'),
-('fuchsia', 12, 'ff0099'),
-('white', 30, 'ffffff');
+INSERT INTO `sj_user_prsgroup` (`id`, `username`, `name`, `weight`, `date_created`, `date_last_modified`) VALUES
+(3875, 'narriax', 'ClusterS', 99, '2020-02-10 13:47:51', '2020-02-10 08:47:51'),
+(9938, 'narriax', 'Cluster1', 1, '2020-02-10 14:19:07', '2020-02-10 09:26:58'),
+(3186, 'narriax', 'Cluster2', 2, '2020-02-10 14:28:09', '2020-02-10 09:28:25'),
+(9937, 'narriax', 'Cluster3', 3, '2020-02-10 14:28:43', '2020-02-10 09:29:03');
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
