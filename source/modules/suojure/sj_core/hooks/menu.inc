@@ -38,7 +38,8 @@ function sj_core_menu () {
 		'page callback' => 'drupal_get_form',
 		'page arguments' => array('sj_core_pages_colors_form'),
 		'access arguments' => array('access administration pages'),
-	);		
+		'weight' => -1,
+	);	
 	$items['admin/config/suojure/colors/colortypes'] = array(
 		'title' => 'Color Types',
 		'type' => MENU_LOCAL_TASK,
@@ -50,19 +51,31 @@ function sj_core_menu () {
 		'page arguments' => array('sj_core_pages_colortypes_form'),
 		'access arguments' => array('access administration pages'),
 	);	
+	$items['admin/config/suojure/colors/sets'] = array(
+		'title' => 'Color Sets',
+		'type' => MENU_LOCAL_TASK,
+		'file' => 'pages/color_sets.php',	 // don't forget to add the file and path
+		'file path' => drupal_get_path('module', 'sj_core'),
+		
+		'description' => 'Configure Suo Jure color sets',
+		'page callback' => 'drupal_get_form',
+		'page arguments' => array('sj_core_pages_colorsets_form'),
+		'access callback' => '',
+		'access arguments' => array('access administration pages'),
+		'weight' => 10,
+	);	
 	
 	
 	
-	$items['personas'] = array (
+	$items['user/personas'] = array (
 		'title' => 'Personas',
-		'type' => MENU_NORMAL_ITEM,
+		'type' => MENU_LOCAL_TASK,
 		'file' => 'pages/personas.php',	 // don't forget to add the file and path
 		'file path' => drupal_get_path('module', 'sj_core'),
 		
 		'page callback' => 'drupal_get_form',
 		'page arguments' => array ('sj_core_pages_personas_form'),
-		'access callback' => 'user_access',
-		'access arguments' => array ('access content'),
+		'access callback' => 'user_is_logged_in',
 	);	
 	 
 	$items['test'] = array (

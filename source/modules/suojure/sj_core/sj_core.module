@@ -27,6 +27,7 @@ module_load_include ('inc', 'sj_core', 'hooks/entity_info');
 
 // api
 module_load_include ('class', 'sj_core', 'api/sjColorSet');
+module_load_include ('class', 'sj_core', 'api/sjUser');
 
 // custom global libraries
 module_load_include ('inc', 'sj_core', 'sj_core_lib');

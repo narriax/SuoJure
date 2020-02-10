@@ -10,18 +10,40 @@ class sjColorSet {
 			return db_select('sj_clrtype', 'ct')->fields('ct', array('name'))->orderBy('weight')->execute()->fetchCol('name');
 	}
 	
-	static function GetColorFamilies() {
+	static function get_color_families() {
 		return db_select('sj_clrfamily', 'ct')->fields('ct', array('name', 'baseclr'))->orderBy('weight')->execute()->fetchAllKeyed(0,1);
 	}
 	
-	static function GetColorShades($full = false) {
-		if ($full)
-			return db_select('sj_clrshades', 'cs')->fields('cs', array())->orderBy('weight')->execute()->fetchAllAssoc('name');
-		else 
+	static function get_color_shades($full = false) {
+		if ($full) {
+			$q = db_select('sj_clrshades', 'cs')->fields('cs', array());
+			$q ->leftjoin('sj_clr', 'c', 'c.shade=cs.name');
+			$q ->addField('c', 'name', 'clrname');
+			$q ->fields('c', array('family', 'color'));
+			$q ->orderBy('weight')->orderBy('family')->orderBy('clrname');
+			$raw = $q->execute()->fetchAll();
+			
+			$list = array ();
+			foreach ($raw as $r) {
+				if (!array_key_exists($r->name, $list)) {
+					$list[$r->name] = new stdClass();
+					$list[$r->name]->name = $r->name;
+					$list[$r->name]->math = $r->math;
+					$list[$r->name]->weight = $r->weight;
+					$list[$r->name]->colors = array();
+				}
+				if (!empty($r->clrname)) {
+					if (!array_key_exists($r->family, $list[$r->name]->colors)) 
+						$list[$r->name]->colors[$r->family] = array();
+					$list[$r->name]->colors[$r->family][$r->clrname] = $r->color;
+				}
+			}
+			return $list;
+		} else 
 			return db_select('sj_clrshades', 'cs')->fields('cs', array('name', 'math'))->orderBy('weight')->execute()->fetchAllKeyed(0,1);
 	}	
 	
-	static function GetPresetColors($family = '') {
+	static function get_colors($family = '') {
 		$q = db_select('sj_clr', 'c')
 		   ->fields('c', array('name', 'color', 'shade'));		   
 		$q->join('sj_clrfamily', 'cf', 'c.family=cf.name');
@@ -56,6 +78,8 @@ class sjColorSet {
 			$rgb[1] = $d * 16 + $d;
 			$d = array(sjColorSet::hex_to_dex($hex[2]));
 			$rgb[2] = $d * 16 + $d;
+		} else if (empty($hex)) {
+			$rgb = array(0, 0, 0);
 		} else {
 			$rgb = array(
 				sjColorSet::hex_to_dex($hex[0]) * 16 + sjColorSet::hex_to_dex($hex[1]),
@@ -81,6 +105,8 @@ class sjColorSet {
 		}
 	}
 	static function hex_to_dex($hex) {
+		$hex = trim($hex);
+		if (empty($hex)) return 0;
 		$hex = strtolower($hex);
 		switch ($hex) {
 			case 'a': return 10;
@@ -94,12 +120,13 @@ class sjColorSet {
 		}
 	}
 	
-	static function AlterColor ($orig, $math) {
+	static function alter_color ($orig, $math) {
 		if (empty($math)) return $orig;
 		
 		$rgb = sjColorSet::hex_to_rgb($orig);
 		$math = str_replace('max', max($rgb).'', $math);
 		$math = str_replace('min', min($rgb).'', $math);
+		$math = str_replace('ave', round(($rgb[0]+$rgb[1]+$rgb[2])/3).'', $math);
 		$clr = '';
 		for ($i=0; $i < 3; $i++) {
 			$z = $rgb[$i];
@@ -111,7 +138,7 @@ class sjColorSet {
 	}
 	
 	
-	static function LabelColor ($base) {
+	static function label_color ($base) {
 		$rgb = sjColorSet::hex_to_rgb($base);
 		$max = max ($rgb);
 		if ($max > 150)

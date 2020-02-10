@@ -5,15 +5,22 @@ function sj_core_personas_block () {
 	if (!user_access('access content')) 
 		return '';
 	
-	global $user;	
-	$personas = entity_load('sj_persona', array(), array('username' => $user->name), false);
-	dpm($personas);
-	
+	$usr = new sjUser();
+	if (!isset($usr)) 
+		return l(t('Log in'), 'login');
+
 	$content = '';
-	foreach ($personas as $p) 
-		$content .= $p;
+	$content .= '<span class="menu-link">'.l($usr->username, 'user').'</span>';
+	$content .= '<span class="menu-link">'.l(t('Logout'), 'user/logout').'</span>';
+
+	foreach ($usr->personas as $pgrp => $ps) {
+		$content .= '<span class="menu-group"><labe>'.$pgrp.'</label></span>';
+		foreach ($ps as $pname => $pdata) 
+			$content .= '<span class="menu-link">'.$pname.'</span>';
+	}
 		
-	$content .= l('+'.t('Persona'), 'personas');
+	
+	$content .= '<span class="menu-link">'.l('manage', 'personas').'</span>';
 		
 	return $content;
 }

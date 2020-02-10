@@ -20,28 +20,41 @@ class sjUser {
 	private $debug_mode = false;
 	
 	private $uid = null;
-	private $access = array();
+	//private $access = array();
+	public $username = null;
+	public $personas = array();
 	
 	// constructor ==================================
 	function __construct ($uid = null) {
 		
-		// get uid
+		$drupal_user = null;
 		if (!isset($uid)) {
 			global $user;
-			if (!isset($user->uid)) return;
-			else $this->uid = $user->uid;
-		} else $this->uid = uid;
+			$drupal_user = $user;
+		} else {
+			$drupal_user =  user_load($uid);
+		}
+		if (!isset($drupal_user) || !isset($drupal_user->uid)) 
+			return;
+		
+		$this->uid = $drupal_user->uid;
+		$this->username = $drupal_user->name;
+
+		$this->load_personas();
 		
 		// load access to projects
-		$this->load_access();
+		//$this->load_access();
 	}
 
-	
-	
+
 	// getters ======================================
+	
 	public function get_uid () {
 		return $this->uid;
 	}
+	
+	
+
 	
 	
 	// access functions =============================
@@ -52,12 +65,13 @@ class sjUser {
 		}
 		$this->debug_mode = true;
 		if (isset($uid_override)) $this->uid = $uid_override;
-		dpm("============== sjUser > test_load_access =============== \n uid = ".$this->uid." \n...running load_access()...\n");
-		$this->load_access();
+		//dpm("============== sjUser > test_load_access =============== \n uid = ".$this->uid." \n...running load_access()...\n");
+		//$this->load_access();
 		$this->debug_mode = false;
 	}
 	
 	// load project access from DB (overwrites existing object data)
+	/*
 	private function load_access () {
 		if ($this->debug_mode) sjl('load_access()', 'trace', 'sjUser');
 			
@@ -96,10 +110,27 @@ class sjUser {
 		// for the rest, go off access table
 		if (array_key_exists($project, $this->access)) return $this->access[$project];
 		else return 0;
-	}
+	}*/
 	
 	
 	
+	// personas ======================================
 	
-	// personas
+	public function load_personas() {
+		$q = db_select('sj_user_persona', 'up')
+			-> fields('up', array()) 
+			-> condition('up.username', $this->username)
+			-> orderBy('up.weight');
+		$raw = $q->execute()->fetchAll();
+		
+		$this->personas = array();
+		foreach ($raw as $r) {
+			if (!array_key_exists($r->grp, $this->personas))
+				$this->personas[$r->grp] = array();
+			$this->personas[$r->grp][$r->name] = $r;
+		}
+	}	
+
+
+	
 }
