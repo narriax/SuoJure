@@ -44,7 +44,17 @@ function sjp() {
 	$sj_log = array();
 }
 
+function sjvar ($varname, $default = null) {
+	if (!array_key_exists('sj', $_SESSION)) return $default;
+	if (!array_key_exists($varname, $_SESSION['sj'])) return $default;
+	return $_SESSION['sj'][$varname];
+}
 
+function sjvar_set ($varname, $newval) {
+	if (!array_key_exists('sj', $_SESSION)) 
+		$_SESSION['sj'] = array();
+	$_SESSION['sj'][$varname] = $newval;
+}
 
 
 function random_string($length = 16) {

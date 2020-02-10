@@ -13,6 +13,16 @@ function sj_core_personas_block () {
 
 	// ======================
 
+	if (array_key_exists('persona', $_GET)) {
+		sjvar_set('persona', $_GET['persona']);
+	}
+	
+	$currents = array(
+		'personas' => sjvar('persona', $usr->get_default_persona()),
+	);
+
+	// ======================
+
 	$links = array (
 		'profile' => array (
 			'' => array (
@@ -31,14 +41,16 @@ function sj_core_personas_block () {
 	foreach ($usr->personas as $pgrp => $ps) {
 		$links['personas'][$pgrp] = array();
 		foreach ($ps as $pname => $pdata) {
-			$links['personas'][$pgrp]['user/persona/'.$pname] = array ('#text' => $pname);
+			$links['personas'][$pgrp]['?persona='.$pname] = array ('#text' => $pname);
 		}
 	}
-	if (!array_key_exists('', $links['personas'])) $links['personas'][''] = array();
-	$links['personas']['']['user/'.$usr->get_uid().'/personas'] = array(
-		'#text' => t('manage'), 
-		'#icon' => 'cog.png', 
-		'#tooltip' => t('manage personas'));
+	if (count($links['personas']) > 0) {
+		if (!array_key_exists('', $links['personas'])) $links['personas'][''] = array();
+		$links['personas']['']['user/'.$usr->get_uid().'/personas'] = array(
+			'#text' => t('manage'), 
+			'#icon' => 'cog.png', 
+			'#tooltip' => t('manage personas'));
+	}
 
 	// ======================
 	global $GLOBALS;
@@ -62,10 +74,15 @@ function sj_core_personas_block () {
 				if (array_key_exists('#icon', $link)) $linkicon = '<img src="'.$imgpath.$link['#icon'].'">';
 				if (array_key_exists('#tooltip', $link)) $linktooltip = $link['#tooltip'];
 				else $linktooltip = $linktext;
+				if ($linkurl[0] !== '?') $linkurl = $GLOBALS['base_url'].'/'.$linkurl;
+
+				$cls = 'menu-link';
+				if (!empty($linkicon)) $cls .= ' has-icon';
+				if (array_key_exists($menuname, $currents) && $currents[$menuname] == $linktext)
+					$cls .= ' selected';
 				
-				$content .= '<a href="'.$GLOBALS['base_url'].'/'.$linkurl.'" '.
-					'class="menu-link '.(empty($linkicon) ? '' : 'has-icon').'" '.
-					'title="'.$linktooltip.'">'.
+				
+				$content .= '<a href="'.$linkurl.'" class="'.$cls.' title="'.$linktooltip.'">'.
 					$linkicon.
 					'<label class="menu-link-name">'.$linktext.'</label></a>';
 			}

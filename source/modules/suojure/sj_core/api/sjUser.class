@@ -131,6 +131,11 @@ class sjUser {
 		}
 	}	
 
-
+	public function get_default_persona () {
+		foreach ($this->personas as $grp => $members) {
+			return array_keys($members)[0];
+		}
+		return '';
+	}
 	
 }
