@@ -38,7 +38,4 @@
 	path = public_html/sites/all/modules/clear_cache
 	url = https://git.drupalcode.org/project/clear_cache.git
 	branch = 7.x-2.x
-[submodule "public_html/sites/all/modules/profile2"]
-	path = public_html/sites/all/module/sprofile2
-	url = https://git.drupalcode.org/project/profile2.git
-	branch = 7.x-1.x
+
