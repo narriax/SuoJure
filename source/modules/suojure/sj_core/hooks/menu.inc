@@ -67,7 +67,7 @@ function sj_core_menu () {
 	
 	
 	
-	$items['user/personas'] = array (
+	$items['user/%user/personas'] = array (
 		'title' => 'Personas',
 		'type' => MENU_LOCAL_TASK,
 		'file' => 'pages/personas.php',	 // don't forget to add the file and path

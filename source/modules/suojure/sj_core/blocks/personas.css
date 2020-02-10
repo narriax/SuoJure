@@ -1,0 +1,39 @@
+#block-sj-core-sj-core-personas .menu-line {
+	text-align:right;
+}
+
+#block-sj-core-sj-core-personas .menu-group {
+	display: inline-block;
+	margin: 0.25em 1em;
+}
+#block-sj-core-sj-core-personas .menu-group-container {
+	position: absolute;
+}
+#block-sj-core-sj-core-personas .menu-link {
+	display: inline-block;
+	margin: 0.25em 1em;
+}
+#block-sj-core-sj-core-personas .menu-group .menu-link {
+	display: block;
+}
+#block-sj-core-sj-core-personas .menu-link.has-icon {
+	margin: 0.25em 0.5em;
+}
+#block-sj-core-sj-core-personas img {
+	max-height: 1.5em;
+	vertical-align: middle;
+}
+
+#block-sj-core-sj-core-personas label {
+	display: inline-block;
+}
+#block-sj-core-sj-core-personas .has-icon label {
+	display: none;
+}
+
+#block-sj-core-sj-core-personas a label {
+	cursor: pointer;
+}
+#block-sj-core-sj-core-personas a:hover label {
+	text-decoration: underline;
+}
