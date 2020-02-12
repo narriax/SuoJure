@@ -84,7 +84,7 @@ function sj_core_pages_personas_form($form, &$form_state) {
 		$pkeys = array();
 		foreach ($grp_data->members as $pid => $pdata) 
 			if ($grp_data->default_pid == $pid) $pkeys[$pid] = '__crown';
-			else $pkeys[$pid] = 'w'.$pdata->weight;
+			else $pkeys[$pid] = 'w'.str_pad($pdata->weight.'',3,'0',STR_PAD_LEFT);
 		asort($pkeys);
 		
 		foreach ($pkeys as $pid => $w) {		
@@ -92,11 +92,11 @@ function sj_core_pages_personas_form($form, &$form_state) {
 			$t = '';
 			$t .= '<a href="?action=crown&pid='.($grp_data->default_pid == $pid ? -1 : $pid).'&grp='.$groups[$g].'" class=persona-crown>'.($grp_data->default_pid == $pid ?'&#9733;':'&nbsp;').'</a>';
 			$t .= '<a href="?action=activate&pid='.$pid.'&active='.($pdata->active?0:1).'" class=persona-active>'.($pdata->active?'&#x2714;':'&nbsp;').'</a>';
-			$t .= '<a href="?action=edit&pid='.$pid.'" class="persona-name form-item">'.$pdata->name.'</a>';
+			$t .= '<a href="persona?persona='.$pid.'" class="persona-name form-item">'.$pdata->name.'</a>';
 			if ($g > 0) 
-				$t .= '<a href="?action=move&pid='.$pid.'&grp='.$groups[$g-1].'" class=link-left><img src="'.$imgpath.'arrow_left.png"><label>move left</label></a>';
+				$t .= '<a href="?action=move&pid='.$pid.'&grp='.$groups[$g-1].'" class=link-left><img src="'.$imgpath.'arrow_left.png"><label>'.t('move left').'</label></a>';
 			if ($g < count($groups)-1) 
-				$t .= '<a href="?action=move&pid='.$pid.'&grp='.$groups[$g+1].'" class=link-right><img src="'.$imgpath.'arrow_right.png"><label>move right</label></a>';
+				$t .= '<a href="?action=move&pid='.$pid.'&grp='.$groups[$g+1].'" class=link-right><img src="'.$imgpath.'arrow_right.png"><label>'.t('move right').'</label></a>';
 			
 			$form['grps']['grp_'.$groups[$g]]['p_'.$pid] = array (
 				'#markup' => '<div class="persona-line">'.$t.'</div>',

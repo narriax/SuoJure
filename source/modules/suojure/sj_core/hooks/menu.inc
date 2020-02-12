@@ -67,7 +67,7 @@ function sj_core_menu () {
 	
 	
 	$items['user/%user/personas'] = array (
-		'title' => 'Personas',
+		'title' => 'Personas List',
 		'type' => MENU_LOCAL_TASK,
 		'file' => 'pages/personas_form.php',	 // don't forget to add the file and path
 		'file path' => drupal_get_path('module', 'sj_core'),
@@ -75,7 +75,20 @@ function sj_core_menu () {
 		'page callback' => 'drupal_get_form',
 		'page arguments' => array ('sj_core_pages_personas_form'),
 		'access callback' => 'user_is_logged_in',
+		'weight' => 5,
 	);	
+	$items['user/%user/persona'] = array (
+		'title' => 'Persona',
+		'type' => MENU_LOCAL_TASK,
+		'file' => 'pages/persona_edit_form.php',	 // don't forget to add the file and path
+		'file path' => drupal_get_path('module', 'sj_core'),
+		
+		'page callback' => 'drupal_get_form',
+		'page arguments' => array ('sj_core_pages_persona_edit_form'),
+		'access callback' => 'user_is_logged_in',
+		'weight' => 6,
+	);
+	
 	 
 	$items['test'] = array (
 		'type' => MENU_NORMAL_ITEM,

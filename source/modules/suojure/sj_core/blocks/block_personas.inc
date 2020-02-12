@@ -12,8 +12,9 @@ function sj_core_personas_block () {
 
 	// ======================
 
-	if (array_key_exists('persona', $_GET)) {
+	if (array_key_exists('persona', $_GET) && $_GET['persona'] != sjvar('persona')) {
 		sjvar_set('persona', $_GET['persona']);
+		header("Refresh:0");
 	}
 	
 	$currents = array(
@@ -46,7 +47,7 @@ function sj_core_personas_block () {
 		$pkeys = array();
 		foreach ($ps->members as $pid => $pdata) 
 			if ($ps->default_pid == $pid) $pkeys[$pid] = '__crown';
-			else $pkeys[$pid] = 'w'.$pdata->weight;
+			else $pkeys[$pid] = 'w'.str_pad($pdata->weight.'',3,'0',STR_PAD_LEFT);
 		asort($pkeys);
 		
 		$links['personas'][$ps->name] = array();

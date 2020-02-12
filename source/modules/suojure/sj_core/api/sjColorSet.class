@@ -3,7 +3,7 @@
 class sjColorSet {
 	
 	
-	static function GetColorTypes ($full = false) {
+	static function get_color_types ($full = false) {
 		if ($full)
 			return db_select('sj_clrtype', 'ct')->fields('ct', array())->orderBy('weight')->execute()->fetchAllAssoc('name');
 		else

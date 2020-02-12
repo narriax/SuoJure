@@ -1,0 +1,19 @@
+.header {
+	position: relative;
+}
+.header-actions {
+	position: absolute;
+	right: 0;
+}
+.header-actions a {
+	margin: 0 2em;
+}
+.header h3 {
+	font-weight: bold;
+	margin: 0.5em 1em;
+	
+}
+.header .mark-inactive {
+	font-style: italic;
+	color: silver;
+}

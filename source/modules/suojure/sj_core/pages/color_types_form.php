@@ -5,7 +5,7 @@ function sj_core_pages_colortypes_form ($form, &$form_state) {
 	
 		drupal_add_css(drupal_get_path('module', 'sj_core').'/pages/colors.css');
 	
-	$clr_types = sjColorSet::GetColorTypes(true);
+	$clr_types = sjColorSet::get_color_types(true);
 	//dpm($clr_types);
 
 	$form['blurb'] = array (

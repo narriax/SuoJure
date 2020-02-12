@@ -124,10 +124,11 @@ fieldset.persona-group .link-right {
 	z-index: 10;
 }
 
-fieldset.persona-group fieldset.persona-line1 {
-	position: absolute;
-	bottom: 0;
-	height: 4em;
+fieldset.persona-group .persona-line {
+	height: 1.75em;
+}
+fieldset.persona-group fieldset.persona-line {
+	height: 2.75em;
 }
 fieldset.persona-group fieldset.persona-line .fieldset-wrapper {
 	padding-top: 0;
