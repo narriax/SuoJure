@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Feb 10, 2020 at 02:41 PM
+-- Generation Time: Feb 12, 2020 at 06:23 AM
 -- Server version: 5.7.24
 -- PHP Version: 7.2.14
 
@@ -35,6 +35,7 @@ CREATE TABLE IF NOT EXISTS `sj_user_persona` (
   `name` varchar(16) NOT NULL,
   `grp` varchar(16) DEFAULT NULL,
   `clrsetid` int(16) DEFAULT NULL,
+  `active` tinyint(1) NOT NULL DEFAULT '1',
   `weight` int(3) NOT NULL DEFAULT '999',
   `date_added` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `date_last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -47,12 +48,19 @@ CREATE TABLE IF NOT EXISTS `sj_user_persona` (
 -- Dumping data for table `sj_user_persona`
 --
 
-INSERT INTO `sj_user_persona` (`id`, `username`, `name`, `grp`, `clrsetid`, `weight`, `date_added`, `date_last_modified`) VALUES
-(6917, 'narriax', 'Anri', 'Cluster1', NULL, 999, '2020-02-08 16:53:04', '2020-02-08 16:53:04'),
-(9417, 'narriax', 'Krey', 'Cluster2', NULL, 999, '2020-02-08 17:46:03', '2020-02-08 17:46:03'),
-(5904, 'narriax', 'Nars', 'Cluster1', NULL, 999, '2020-02-10 10:25:41', '2020-02-10 10:25:41'),
-(9798, 'narriax', 'Silver', 'Silver', NULL, 999, '2020-02-10 10:51:43', '2020-02-10 10:51:43'),
-(6922, 'narriax', 'Julia', 'Cluster3', NULL, 999, '2020-02-10 10:51:59', '2020-02-10 10:51:59');
+INSERT INTO `sj_user_persona` (`id`, `username`, `name`, `grp`, `clrsetid`, `active`, `weight`, `date_added`, `date_last_modified`) VALUES
+(6917, 'narriax', 'Anri', '9938', NULL, 1, 10, '2020-02-08 16:53:04', '2020-02-12 05:53:56'),
+(9417, 'narriax', 'Krey', '3186', NULL, 1, 50, '2020-02-08 17:46:03', '2020-02-12 05:56:00'),
+(5904, 'narriax', 'Nars', '9938', NULL, 1, 20, '2020-02-10 10:25:41', '2020-02-12 05:55:16'),
+(9798, 'narriax', 'Silver', '3875', NULL, 1, 130, '2020-02-10 10:51:43', '2020-02-12 06:00:09'),
+(6922, 'narriax', 'Julia', '9937', NULL, 0, 150, '2020-02-10 10:51:59', '2020-02-12 05:59:50'),
+(8712, 'narriax', 'Raze', '9938', NULL, 1, 30, '2020-02-12 04:17:04', '2020-02-12 05:55:37'),
+(5566, 'narriax', 'Raven', '3186', NULL, 0, 70, '2020-02-12 04:17:11', '2020-02-12 05:56:26'),
+(8231, 'narriax', 'Drek', '3186', NULL, 0, 90, '2020-02-12 04:17:14', '2020-02-12 05:56:45'),
+(5687, 'narriax', 'Christa', '3186', NULL, 1, 100, '2020-02-12 04:17:31', '2020-02-12 05:56:58'),
+(5502, 'narriax', 'Lan', '3186', NULL, 0, 60, '2020-02-12 04:17:49', '2020-02-12 05:56:12'),
+(6651, 'narriax', 'Lexi', '3186', NULL, 1, 120, '2020-02-12 04:17:53', '2020-02-12 05:59:16'),
+(9151, 'narriax', 'Mik', '3186', NULL, 0, 110, '2020-02-12 04:17:57', '2020-02-12 05:59:32');
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

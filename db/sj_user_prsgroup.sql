@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Feb 10, 2020 at 02:41 PM
+-- Generation Time: Feb 12, 2020 at 06:21 AM
 -- Server version: 5.7.24
 -- PHP Version: 7.2.14
 
@@ -33,6 +33,7 @@ CREATE TABLE IF NOT EXISTS `sj_user_prsgroup` (
   `id` int(4) NOT NULL,
   `username` varchar(16) NOT NULL,
   `name` varchar(16) NOT NULL,
+  `default_pid` int(4) NOT NULL DEFAULT '-1',
   `weight` int(2) NOT NULL DEFAULT '99',
   `date_created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `date_last_modified` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -42,11 +43,11 @@ CREATE TABLE IF NOT EXISTS `sj_user_prsgroup` (
 -- Dumping data for table `sj_user_prsgroup`
 --
 
-INSERT INTO `sj_user_prsgroup` (`id`, `username`, `name`, `weight`, `date_created`, `date_last_modified`) VALUES
-(3875, 'narriax', 'ClusterS', 99, '2020-02-10 13:47:51', '2020-02-10 08:47:51'),
-(9938, 'narriax', 'Cluster1', 1, '2020-02-10 14:19:07', '2020-02-10 09:26:58'),
-(3186, 'narriax', 'Cluster2', 2, '2020-02-10 14:28:09', '2020-02-10 09:28:25'),
-(9937, 'narriax', 'Cluster3', 3, '2020-02-10 14:28:43', '2020-02-10 09:29:03');
+INSERT INTO `sj_user_prsgroup` (`id`, `username`, `name`, `default_pid`, `weight`, `date_created`, `date_last_modified`) VALUES
+(3875, 'narriax', 'ClusterS', 9798, 99, '2020-02-10 13:47:51', '2020-02-10 08:47:51'),
+(9938, 'narriax', 'Cluster1', 6917, 1, '2020-02-10 14:19:07', '2020-02-10 09:26:58'),
+(3186, 'narriax', 'Cluster2', 9417, 2, '2020-02-10 14:28:09', '2020-02-10 09:28:25'),
+(9937, 'narriax', 'Cluster3', 6922, 3, '2020-02-10 14:28:43', '2020-02-10 09:29:03');
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

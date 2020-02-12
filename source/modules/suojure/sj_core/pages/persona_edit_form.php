@@ -3,29 +3,6 @@
 function sj_core_pages_persona_edit_form ($form, &$form_state) {
 	sj_core_load_css('persona_edit', 'form');
 	
-	
-	$editmode = false;
-	if (array_key_exists('action', $_GET)) {
-		switch ($_GET['action']) {
-			case 'delete':
-				$q = db_delete('sj_user_persona')->condition('id', $_GET['pid'])->execute();
-				break;
-			case 'activate':
-				$q = db_update('sj_user_persona')->fields(array('active' => $_GET['active']))->condition('id', $_GET['pid'])->execute();
-				break;
-			case 'edit':
-				$editmode = $_GET['edit'];
-				break;
-			case 'attachcolors':
-				$editmode = true;
-				$newid = generate_new_uoid(array('sj_clrset'=>'id'), 4,4);
-				$q = db_insert('sj_clrset')->fields(array('id'))->values(array(0 => array('id' => $newid)))->execute();
-				$q = db_update('sj_user_persona')->fields(array('clrsetid' => $newid))->condition('id', $_GET['pid'])->execute();
-				break;
-		}
-	}	
-	
-	
 	$usr = new sjUser();
 	if (!isset($usr))
 		return $form;
@@ -61,6 +38,33 @@ function sj_core_pages_persona_edit_form ($form, &$form_state) {
 		);	
 		return $form;
 	}
+	
+	
+	$editmode = false;
+	if (array_key_exists('action', $_GET)) {
+		switch ($_GET['action']) {
+			case 'delete':
+				$q = db_delete('sj_user_persona')->condition('id', $_GET['pid'])->execute();
+				break;
+			case 'activate':
+				$q = db_update('sj_user_persona')->fields(array('active' => $_GET['active']))->condition('id', $_GET['pid'])->execute();
+				break;
+			case 'edit':
+				$editmode = $_GET['edit'];
+				break;
+			case 'attachcolors':
+				// todo: do not insert redundants
+			
+				$editmode = true;
+				$newid = generate_new_uoid(array('sj_clrset'=>'id'), 4,4);
+				$q = db_insert('sj_clrset')->fields(array('id'))->values(array(0 => array('id' => $newid)))->execute();
+				$q = db_update('sj_user_persona')->fields(array('clrsetid' => $newid))->condition('id', $_GET['pid'])->execute();
+				break;
+		}
+		// todo: updte persona obj
+	}	
+	
+	
 	
 	$form['header_open'] = array ('#markup' => '<div class="header persona-'.($persona->active ? 'active' : 'inactive').'">');
 		
