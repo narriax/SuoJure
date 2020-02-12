@@ -4,6 +4,27 @@ function sj_core_pages_personas_form($form, &$form_state) {
 	
 	sj_core_load_css('personas', 'form');
 	
+	if (array_key_exists('action', $_GET)) {
+		switch($_GET['action']) {
+			case 'move':
+				$q = db_update('sj_user_persona')->fields(array('grp' => $_GET['grp']))->condition('id', $_GET['pid'])->execute();
+				break;
+			case 'activate':
+				$q = db_update('sj_user_persona')->fields(array('active' => $_GET['active']))->condition('id', $_GET['pid'])->execute();
+				break;
+			case 'crown':
+				$q = db_update('sj_user_prsgroup')->fields(array('default_pid' => $_GET['pid']))->condition('id', $_GET['grp'])->execute();
+				break;
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	
 	$form['blurb'] = array (
 		'#markup' => '<div class=blurb>'.
 			t('Personas allow multiple "usernames" to be used by the same profile.').'<br>'. 
@@ -43,50 +64,64 @@ function sj_core_pages_personas_form($form, &$form_state) {
 		'#attributes' => array ('class' => array ('section-groups', 'flex-table')),
 	);
 		
-	foreach ($form_state['current_user']->personas as $pgrp => $ps) {
-		$groups[$pgrp] = $pgrp;
+	
+	$imgpath = $GLOBALS['base_url'].'/'.drupal_get_path('theme', 'suojure').'/images/';
+	$groups = array_keys($form_state['current_user']->personas);
+	
+	$maxcount = 0;
+	for ($g=0; $g < count($groups); $g++)
+		$maxcount = max ($maxcount, count($form_state['current_user']->personas[$groups[$g]]->members));
+	
+	for ($g=0; $g < count($groups); $g++) { // $form_state['current_user']->personas as $pgrp => $ps) {	
+		$grp_data = $form_state['current_user']->personas[$groups[$g]];
 		
-		$form['grps']['grp_'.$pgrp] = array (
+		$form['grps']['grp_'.$groups[$g]] = array (
 			'#type' => 'fieldset',
-			'#title' => ($pgrp == -1 ? '- ungrouped -' : (empty($ps->name) ? '&nbsp;' : $ps->name)),
+			'#title' => ($groups[$g] == -1 ? '- ungrouped -' : (empty($grp_data->name) ? '&nbsp;' : $grp_data->name)),
 			'#attributes' => array ('class' => array ('persona-group', 'flex-col')),
 		);
-			
-		foreach ($ps->members as $pid => $pdata) {
-			$form['grps']['grp_'.$pgrp]['p_'.$pid] = array (
-				'#type' => 'fieldset',
-				'#attributes' => array ('class' => array ('persona-line')),
-			);
-					
-			$form['grps']['grp_'.$pgrp]['p_'.$pid]['p_'.$pid.'_name'] = array (
-				'#type' => 'textfield',
-				'#default_value' => $pdata->name,
-				'#maxlength' => 16,
-			);
-			
-			$form['grps']['grp_'.$pgrp]['p_'.$pid]['p_'.$pid.'_delete'] = array (
-				'#markup' => '<div class="form-item form-type-links">'.
-					'<a href="">edit</a> &nbsp; '.
-					'<a href="">delete</a>'.
-				'</div>',
-			);	
-		}
 		
-		$form['grps']['grp_'.$pgrp]['_new'] = array (
+		$pkeys = array();
+		foreach ($grp_data->members as $pid => $pdata) 
+			if ($grp_data->default_pid == $pid) $pkeys[$pid] = '__crown';
+			else $pkeys[$pid] = 'w'.$pdata->weight;
+		asort($pkeys);
+		
+		foreach ($pkeys as $pid => $w) {		
+			$pdata = $grp_data->members[$pid];
+			$t = '';
+			$t .= '<a href="?action=crown&pid='.($grp_data->default_pid == $pid ? -1 : $pid).'&grp='.$groups[$g].'" class=persona-crown>'.($grp_data->default_pid == $pid ?'&#9733;':'&nbsp;').'</a>';
+			$t .= '<a href="?action=activate&pid='.$pid.'&active='.($pdata->active?0:1).'" class=persona-active>'.($pdata->active?'&#x2714;':'&nbsp;').'</a>';
+			$t .= '<a href="?action=edit&pid='.$pid.'" class="persona-name form-item">'.$pdata->name.'</a>';
+			if ($g > 0) 
+				$t .= '<a href="?action=move&pid='.$pid.'&grp='.$groups[$g-1].'" class=link-left><img src="'.$imgpath.'arrow_left.png"><label>move left</label></a>';
+			if ($g < count($groups)-1) 
+				$t .= '<a href="?action=move&pid='.$pid.'&grp='.$groups[$g+1].'" class=link-right><img src="'.$imgpath.'arrow_right.png"><label>move right</label></a>';
+			
+			$form['grps']['grp_'.$groups[$g]]['p_'.$pid] = array (
+				'#markup' => '<div class="persona-line">'.$t.'</div>',
+			);
+		}
+		for ($i=count($pkeys); $i < $maxcount; $i++)
+			$form['grps']['grp_'.$groups[$g]]['p___'.$i] = array ('#markup' => '<div class="persona-line">&nbsp;</div>');
+	
+		
+		$form['grps']['grp_'.$groups[$g]]['_new'] = array (
 			'#type' => 'fieldset',
 			'#attributes' => array ('class' => array ('persona-line')),
 		);
 
-		$form['grps']['grp_'.$pgrp]['_new']['grp_'.$pgrp.'__new'] = array (
-			'#title' => '+'.t('New Persona'),
+		$form['grps']['grp_'.$groups[$g]]['_new']['grp_'.$groups[$g].'__new'] = array (
+			//'#title' => '+'.t('New Persona'),
 			'#type' => 'textfield',
 			'#maxlength' => 16,
 		);
 	}
-	$form['grps__btnsave'] = array(
+	$form['btnsave'] = array(
 		'#type' => 'submit',
 		'#value' => t('Save Personas'),
 		'#prefix' => '<br>',
+		'#default' => true,
 	);	
 	
 	
@@ -135,58 +170,13 @@ function sj_core_pages_personas_form($form, &$form_state) {
 		'#value' => t('Save Groups'),
 	);	
 	
-	
-	
-	$form['new_title'] = array (
-		'#markup' => '<hr><h3>'.t('Add New Persona').'</h3>',
-	);
-	
-	$form['new_id'] = array (
-		'#type' => 'hidden',
-		'#value' => generate_new_uoid(array('sj_user_persona' => 'id'), 4, 4),
-	);
-	$form['new_username'] = array (
-		'#type' => 'hidden',
-		'#value' => $form_state['current_user']->username,
-	);	
-
-	$form['new_name'] = array (
-		'#title' => t('Name'),
-		'#type' => 'textfield',
-		'#maxlength' => 16,
-	);
-	$form['new_group_sel'] = array (	
-		'#type' => 'select',
-		'#options' => $groups,
-	);
-
-	/*
-	$form['new_color'] = array (
-		'#title' => t('Colors'),
-		'#type' => 'fieldset',
-	);
-	foreach ($clr_types as $ct) {
-		$form['new_color']['clr_'.$ct] = array (	
-			'#title' => t(ucfirst($ct)),
-			'#type' => 'select',
-			'#options' => $groups,
-			'#maxlength' => 16,
-		);
-	}*/
-	
-	$form['new_btn'] = array(
-		'#type' => 'submit',
-		'#value' => t('Add New Persona'),
-	);
-
-	
 	return $form;
 }
 
 
 
 function sj_core_pages_personas_form_validate($form, &$form_state) {
-	dpm($form_state['values']);
+	//var_dump($form_state['values']);
 	//dpm($form_state['triggering_element']['#id']);
 	
 	if ($form_state['triggering_element']['#id'] === 'edit-save-groups') {
@@ -194,27 +184,17 @@ function sj_core_pages_personas_form_validate($form, &$form_state) {
 			//if ($form_state['values']['grp_'.$pgrp.'_name'] != $grp_data -> name)
 		}
 		
-	} else if ($form_state['triggering_element']['#id'] === 'edit-new-btn') {
+	} else {
 		//$form_state['current_user']
 
-		if ($form_state['values']['new_group_sel'] == -1 && !empty($form_state['values']['new_group_newname'])) {
-			$form_state['values']['new_group_sel'] = trim($form_state['values']['new_group_newname']);
+		$form_state['values']['inserts'] = array();
+		if (!empty(trim($form_state['values']['grp_-1__new']))) {
+			$form_state['values']['inserts'][-1] = trim($form_state['values']['grp_-1__new']);
 		}
 		
-		$form_state['values']['new_name'] = trim($form_state['values']['new_name']);
-		if (empty($form_state['values']['new_name']))
-			form_set_error('new_name', t('Name cannot be empty'));
-		else {
-			$err = false;
-			foreach ($form_state['current_user']->personas as $grp => $grp_members) {
-				foreach ($grp_members as $pname => $pdata) {	
-					if ($form_state['values']['new_name'] === $pname) {
-						form_set_error('', t('Persona already exists').' ('.$grp.')');
-						$err = true;
-						break;
-					}
-				}
-				if ($err) break;
+		foreach ($form_state['current_user']->personas as $grp => $grp_members) {
+			if (!empty(trim($form_state['values']['grp_'.$grp.'__new']))) {
+				$form_state['values']['inserts'][$grp] = trim($form_state['values']['grp_'.$grp.'__new']);
 			}
 		}
 	}	
@@ -223,6 +203,7 @@ function sj_core_pages_personas_form_validate($form, &$form_state) {
 
 
 function sj_core_pages_personas_form_submit($form, &$form_state) {
+	
 	if ($form_state['triggering_element']['#id'] === 'edit-save-groups') {
 		foreach ($form_state['current_user']->personas as $pgrp => $grp_data) {
 			
@@ -268,14 +249,16 @@ function sj_core_pages_personas_form_submit($form, &$form_state) {
 				$q->execute();
 		}
 
-	} else if ($form_state['triggering_element']['#id'] === 'edit-new-btn') {
-		$q = db_insert('sj_user_persona') -> fields(array(
-			'id' => $form_state['values']['new_id'],
-			'username' => $form_state['current_user']->username,
-			'name' => $form_state['values']['new_name'],
-			'grp' => $form_state['values']['new_group_sel'],
-		))->execute();
-		
+	} else {
+		foreach ($form_state['values']['inserts'] as $grp => $newname) {
+			$q = db_insert('sj_user_persona') -> fields(array(
+				'id' => generate_new_uoid(array('sj_user_prsgroup' => 'id', 'sj_user_persona'=>'id'), 4,4),
+				'username' => $form_state['current_user']->username,
+				'name' => $newname,
+				'grp' =>  $grp,
+			))->execute();
+		}
+	
 	}
 
 }

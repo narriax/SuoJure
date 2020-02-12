@@ -44,27 +44,103 @@ hr {
 
 
 fieldset.persona-group {
-	display: table-cell;
+	display: block;
 	vertical-align: top;
-	width: 15em;
 	margin: 0.25em;
 	margin-bottom: 2em;
+	position: relative;
 }
 fieldset.persona-group .fieldset-wrapper {
 	margin: 0.5em 0;
-	padding: 0.25em;
+	padding: 0.5em;
+	padding-top: 1.2em;
 }
 fieldset.persona-group .persona-line {
 	padding: 0;
 	border: 0;
 	margin: 0.25em 0;
+	display: block;
+	position: relative;
 }
-fieldset.persona-group .persona-line .fieldset-wrapper {
-	margin: 0 0.25em;
+fieldset.persona-group .persona-line .persona-name {
+	line-height: 1.2em;
 }
-fieldset.persona-group .persona-line .form-item {
-	border: 0;
-	margin: 0 4px;
+
+
+fieldset.persona-group a img {
+	max-height: 1.2em;
+	filter: opacity(50%);
+}
+fieldset.persona-group a:hover img {
+	filter: opacity(75%);
+}
+fieldset.persona-group img + label {
+	display: none;
+}
+fieldset.persona-group .persona-name {
+	margin: 0;
+	margin-right: 2em;
+}
+fieldset.persona-group .persona-active,
+fieldset.persona-group .persona-crown {
+	border-radius: 0.8em;
+	width: 1.5em;
 	display: inline-block;
+	text-align: center;
+	font-weight: bold;
+	
 }
+fieldset.persona-group .persona-active {
+	color: #595;
+	margin-right: 0.5em;
+	margin-left: -0.2em;
+}
+fieldset.persona-group .persona-crown {
+	margin-left: 1.25em;
+	color: #d89f00;
+	font-size:1.2em;
+}
+fieldset.persona-group .persona-active:hover,
+fieldset.persona-group .persona-crown:hover {
+	text-decoration: none;
+}
+fieldset.persona-group .persona-active:hover {
+	color: #0a0;
+	background: #ded;
+}
+fieldset.persona-group .persona-crown:hover {
+	color: #a00;
+	background: #efddad;
+}
+
+fieldset.persona-group .link-left {
+	position: absolute;
+	left: 0.2em;
+	z-index: 10;
+}
+fieldset.persona-group .link-right {
+	position: absolute;
+	right: 0.2em;
+	z-index: 10;
+}
+
+fieldset.persona-group fieldset.persona-line1 {
+	position: absolute;
+	bottom: 0;
+	height: 4em;
+}
+fieldset.persona-group fieldset.persona-line .fieldset-wrapper {
+	padding-top: 0;
+	padding-bottom: 0;
+	margin: 0;
+}
+fieldset.persona-group fieldset.persona-line .fieldset-wrapper .form-item {
+	margin-bottom: 0;
+}
+
+
+
+
+
+
 

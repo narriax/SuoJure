@@ -37,13 +37,27 @@ function sj_core_personas_block () {
 		),
 		'personas' => array (),
 	);
+
+
+		
 	foreach ($usr->personas as $pgrp => $ps) {
 		if (empty($ps->members)) continue;
+		
+		$pkeys = array();
+		foreach ($ps->members as $pid => $pdata) 
+			if ($ps->default_pid == $pid) $pkeys[$pid] = '__crown';
+			else $pkeys[$pid] = 'w'.$pdata->weight;
+		asort($pkeys);
+		
 		$links['personas'][$ps->name] = array();
-		foreach ($ps->members as $pid => $pdata) {
+		foreach ($pkeys as $pid => $w) {
+			$pdata = $ps->members[$pid];
+			if (!$pdata->active) continue;
 			$links['personas'][$ps->name]['?persona='.$pid] = array ('#text' => $pdata->name);
 		}
+		if (empty($links['personas'][$ps->name])) unset($links['personas'][$ps->name]);
 	}
+	
 	if (count($links['personas']) > 0) {
 		if (!array_key_exists('', $links['personas'])) $links['personas'][''] = array();
 		$links['personas']['']['user/'.$usr->get_uid().'/personas'] = array(
