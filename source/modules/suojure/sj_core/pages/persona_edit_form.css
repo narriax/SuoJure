@@ -10,10 +10,14 @@
 }
 .header h3 {
 	font-weight: bold;
-	margin: 0.5em 1em;
-	
+	margin-top: 0.5em;
+	margin-bottom: 1.5em;
 }
 .header .mark-inactive {
 	font-style: italic;
 	color: silver;
+}
+
+.view-line label {
+	display: inline-block;
 }

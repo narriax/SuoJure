@@ -74,13 +74,25 @@ fieldset.persona-group a img {
 fieldset.persona-group a:hover img {
 	filter: opacity(75%);
 }
-fieldset.persona-group img + label {
+fieldset.persona-group .persona-line label {
+	display: inline-block;
+	font-weight: normal;
+	cursor: inherit;
+}
+fieldset.persona-group .persona-line img + label {
 	display: none;
 }
 fieldset.persona-group .persona-name {
 	margin: 0;
 	margin-right: 2em;
 }
+fieldset.persona-group .inactive .persona-name {
+	color: #8caec1;
+}
+fieldset.persona-group .inactive:hover .persona-name {
+	color: #0070b3;
+}
+
 fieldset.persona-group .persona-active,
 fieldset.persona-group .persona-crown {
 	border-radius: 0.8em;

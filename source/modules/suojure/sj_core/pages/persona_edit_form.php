@@ -8,7 +8,7 @@ function sj_core_pages_persona_edit_form ($form, &$form_state) {
 		return $form;
 	
 	if (empty($usr->personas)) {
-		$form['no_cotnent'] = array (
+		$form['no_content'] = array (
 			'#markup' => '<div class="blurb no-content">'.t('No personas have been created for your profile.').'</div>',
 		);		
 		return $form;
@@ -81,12 +81,16 @@ function sj_core_pages_persona_edit_form ($form, &$form_state) {
 		
 	if (!$editmode) {
 		$form['title'] = array ('#markup' => '<h3>'.$persona->name.'</h3>');
+		$form['signature'] = array ('#markup' => 
+			'<div class="view-line signature"><label>Signature</label>: '.
+			(empty($persona->signature) ? '<span class=no-content>- none -</span>' : $persona->signature.'</div>'));
 		
 	} else  {
 		$form['name'] = array (
 			'#type' => 'textfield',
 			'#title' => t('Name'),
 			'#default_value' => $persona->name,
+			'#maxlength' => 16,
 		);
 	}
 	
@@ -109,6 +113,13 @@ function sj_core_pages_persona_edit_form ($form, &$form_state) {
 			$form['weight']['#options'][$i*10] = $i*20;
 		ksort($form['weight']['#options']);
 		
+		$form['signature'] = array (
+			'#type' => 'textarea',
+			'#title' => t('Signature'),
+			'#maxlength' => 255,
+			'#default_value' => $persona->signature,
+		);
+		
 		if (isset($persona->clrsetid)) {
 			$form['color_set'] = array (
 				'#type' => 'fieldset',
@@ -117,8 +128,8 @@ function sj_core_pages_persona_edit_form ($form, &$form_state) {
 			
 			$clrtypes = sjColorSet::get_color_types();
 			foreach ($clrtypes as $tp =>$tpp) {
-				$form['color_set']['type_'.$tpp] = array (
-					'#type' => 'textfield',
+				$form['color_set']['clrtype_'.$tpp] = array (
+					'#type' => 'jquery_colorpicker',
 					'#title' => $tpp,
 					'#default_value' => '',
 				);
@@ -157,9 +168,15 @@ function sj_core_pages_persona_edit_form_validate ($form, &$form_state) {
 function sj_core_pages_persona_edit_form_submit ($form, &$form_state) {
 	$q = db_update('sj_user_persona')->fields(array(
 		'name' => $form_state['values']['name'],
+		'signature' => $form_state['values']['signature'],
 		'weight' => $form_state['values']['weight'],
 		'date_last_modified' => date('Y-m-d H:i:s'),
 	))->condition('id', $form_state['values']['pid'])->execute();
+	
+	$clrtypes = sjColorSet::get_color_types();
+	foreach ($clrtypes as $tp =>$tpp) {
+		echo $form_state['values']['clrtype_'.$tpp].'<br>';
+	}
 }
 
 

@@ -18,7 +18,7 @@
 	margin: 2em;
 }
 
-.blurb.no-content {
+.no-content {
 	color: gray;
 	font-style: italic;
 }

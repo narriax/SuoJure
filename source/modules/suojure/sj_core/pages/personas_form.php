@@ -27,12 +27,12 @@ function sj_core_pages_personas_form($form, &$form_state) {
 	
 	$form['blurb'] = array (
 		'#markup' => '<div class=blurb>'.
-			t('Personas allow multiple "usernames" to be used by the same profile.').'<br>'. 
+			t('Personas allow multiple "usernames" to be used by the same profile as well as attaching extra information to the user.').'<br>'. 
 			t('Authoring content and general access rules will respect this subdivision 
 			while still following the parent profile rules as well.').'</div>',
 	);
 	
-	$clr_types = sjColorSet::GetColorTypes();
+	$clr_types = sjColorSet::get_color_types();
 	$clr_families = sjColorSet::get_color_families();
 	$clrs = sjColorSet::get_colors();
 	
@@ -89,17 +89,57 @@ function sj_core_pages_personas_form($form, &$form_state) {
 		
 		foreach ($pkeys as $pid => $w) {		
 			$pdata = $grp_data->members[$pid];
-			$t = '';
-			$t .= '<a href="?action=crown&pid='.($grp_data->default_pid == $pid ? -1 : $pid).'&grp='.$groups[$g].'" class=persona-crown>'.($grp_data->default_pid == $pid ?'&#9733;':'&nbsp;').'</a>';
-			$t .= '<a href="?action=activate&pid='.$pid.'&active='.($pdata->active?0:1).'" class=persona-active>'.($pdata->active?'&#x2714;':'&nbsp;').'</a>';
-			$t .= '<a href="persona?persona='.$pid.'" class="persona-name form-item">'.$pdata->name.'</a>';
-			if ($g > 0) 
-				$t .= '<a href="?action=move&pid='.$pid.'&grp='.$groups[$g-1].'" class=link-left><img src="'.$imgpath.'arrow_left.png"><label>'.t('move left').'</label></a>';
-			if ($g < count($groups)-1) 
-				$t .= '<a href="?action=move&pid='.$pid.'&grp='.$groups[$g+1].'" class=link-right><img src="'.$imgpath.'arrow_right.png"><label>'.t('move right').'</label></a>';
+			
+			$items = array (
+				'crown' => array (
+					'text' => ($grp_data->default_pid == $pid ?'&#9733;':'&nbsp;'),
+					'icon' => '',
+					'class' => 'persona-crown',
+					'tooltip' => t('make group\'s primary'),
+					'url' => '?action=crown&pid='.($grp_data->default_pid == $pid ? -1 : $pid).'&grp='.$groups[$g],
+				),
+				'active' => array (
+					'text' => ($pdata->active?'&#x2714;':'&nbsp;'),
+					'icon' => '',
+					'class' => 'persona-active',
+					'tooltip' => t('toggle active status'),
+					'url' => '?action=activate&pid='.$pid.'&active='.($pdata->active?0:1),
+				),
+				'name' => array (
+					'text' => $pdata->name,
+					'icon' => '',
+					'class' => 'persona-name form-item',
+					'tooltip' => $pdata->signature,
+					'url' => 'persona?persona='.$pid,
+				),			
+			);
+			if ($g > 0) $items['left'] = array (
+					'text' => t('move left'),
+					'icon' => 'arrow_left.png',
+					'class' => 'persona-move link-left',
+					'tooltip' => t('move left'),
+					'url' => '?action=move&pid='.$pid.'&grp='.$groups[$g-1],
+			);
+			if ($g < count($groups)-1) $items['right'] = array (
+					'text' => t('move right'),
+					'icon' => 'arrow_right.png',
+					'class' => 'persona-move link-right',
+					'tooltip' => t('move right'),
+					'url' => '?action=move&pid='.$pid.'&grp='.$groups[$g+1],
+			);
+					
+			$line = '';
+			foreach ($items as $itemname => $itemvalues) {
+				$line .= '<a href="'.$itemvalues['url'].'" class="'.$itemvalues['class'].'" title="'.$itemvalues['tooltip'].'">';
+				if (!empty($itemvalues['icon'])) 
+					$line .= '<img src="'.$imgpath.$itemvalues['icon'].'">';
+				if (!empty($itemvalues['text'])) 
+					$line .= '<label>'.$itemvalues['text'].'</label>';
+				$line .= '</a>';
+			}
 			
 			$form['grps']['grp_'.$groups[$g]]['p_'.$pid] = array (
-				'#markup' => '<div class="persona-line">'.$t.'</div>',
+				'#markup' => '<div class="persona-line '.($pdata->active ? 'active' : 'inactive').'">'.$line.'</div>'
 			);
 		}
 		for ($i=count($pkeys); $i < $maxcount; $i++)
