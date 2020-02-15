@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Feb 10, 2020 at 02:41 PM
+-- Generation Time: Feb 15, 2020 at 09:34 PM
 -- Server version: 5.7.24
 -- PHP Version: 7.2.14
 
@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS `sj_clrshades` (
 INSERT INTO `sj_clrshades` (`name`, `math`, `weight`) VALUES
 ('pastel', '(n-min)+(max-n)*0.6', 20),
 ('pure', '', 30),
-('gem', 'n/2', 40),
+('gem', '3*n/4', 40),
 ('dark', 'n/4', 50),
 ('offwhite', '(n-min/30)+(max-n)*(0.85-min)', 10),
 ('deep', 'n/8', 60),
@@ -52,7 +52,8 @@ INSERT INTO `sj_clrshades` (`name`, `math`, `weight`) VALUES
 ('soft', 'n/15+max/2', 90),
 ('light', '(n-min/2)+(max-n)*0.3+ave/5', 25),
 ('pitch', 'n/30+max/40', 65),
-('touch', 'n/20+max/1.25', 110);
+('touch', 'n/20+max/1.25', 110),
+('heart', '2*n/5', 45);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

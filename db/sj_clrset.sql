@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Feb 10, 2020 at 02:41 PM
+-- Generation Time: Feb 15, 2020 at 09:34 PM
 -- Server version: 5.7.24
 -- PHP Version: 7.2.14
 
@@ -33,6 +33,24 @@ CREATE TABLE IF NOT EXISTS `sj_clrset` (
   `id` int(16) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `sj_clrset`
+--
+
+INSERT INTO `sj_clrset` (`id`) VALUES
+(2184),
+(2312),
+(2417),
+(2717),
+(3552),
+(3752),
+(4371),
+(5150),
+(7553),
+(7735),
+(8556),
+(9408);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

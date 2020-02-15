@@ -16,7 +16,7 @@ function sj_core_schema_clrset_clrs (&$schema) {
 		),
 		'clr' => array(
 		  'type' => 'varchar',
-		  'size' => 16,
+		  'size' => 6,
 		  'not null' => TRUE,
 		),
 	),

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Feb 10, 2020 at 02:40 PM
+-- Generation Time: Feb 15, 2020 at 09:26 PM
 -- Server version: 5.7.24
 -- PHP Version: 7.2.14
 
@@ -55,7 +55,7 @@ INSERT INTO `sj_clr` (`name`, `color`, `family`, `shade`) VALUES
 ('swamp', '', 'grass', 'suede'),
 ('tea', '', 'grass', 'pastel'),
 ('lime', '', 'lime', 'pure'),
-('green', '', 'lime', 'dark'),
+('malachite', '', 'lime', 'dark'),
 ('eco', '', 'lime', 'pastel'),
 ('leygreen', '', 'leygreen', 'pure'),
 ('forest', '', 'leygreen', 'dark'),
@@ -86,17 +86,17 @@ INSERT INTO `sj_clr` (`name`, `color`, `family`, `shade`) VALUES
 ('emerald', '', 'lime', 'gem'),
 ('sage', '', 'yellow', 'suede'),
 ('pine', '', 'leygreen', 'deep'),
-('malachite', '', 'lime', 'deep'),
+('green', '', 'lime', 'heart'),
 ('grass', '', 'grass', 'gem'),
 ('white', '', 'white', 'pure'),
-('sapphhire', '', 'blue', 'gem'),
+('sapphire', '', 'blue', 'heart'),
 ('midnight', '', 'blue', 'deep'),
 ('sky', '', 'sky', 'pastel'),
 ('leyblue', '', 'sky', 'pure'),
 ('rose', '', 'fuchsia', 'offwhite'),
 ('royal', '', 'violet', 'dark'),
 ('leather', '', 'red', 'suede'),
-('bark', '', 'orange', 'suede'),
+('taupe', '', 'orange', 'suede'),
 ('turquoise', '', 'cyan', 'gem'),
 ('lapis', '', 'violet', 'gem'),
 ('eggplant', '', 'magenta', 'suede'),
@@ -115,7 +115,7 @@ INSERT INTO `sj_clr` (`name`, `color`, `family`, `shade`) VALUES
 ('fog', '', 'sky', 'touch'),
 ('topaz', '', 'yellow', 'light'),
 ('cobalt', '', 'sky', 'gem'),
-('steel', '', 'white', 'gem'),
+('steel', '', 'white', 'light'),
 ('moss', '', 'grass', 'dark'),
 ('jade', '', 'leygreen', 'gem'),
 ('cave', '', 'yellow', 'pitch'),
@@ -132,7 +132,24 @@ INSERT INTO `sj_clr` (`name`, `color`, `family`, `shade`) VALUES
 ('smoke', '', 'magenta', 'soft'),
 ('agate', '', 'fuchsia', 'soft'),
 ('orchid', '', 'magenta', 'light'),
-('plum', '', 'fuchsia', 'gem');
+('plum', '', 'fuchsia', 'gem'),
+('blood', '', 'red', 'heart'),
+('rouge', '', 'red', 'light'),
+('lake', '', 'sky', 'heart'),
+('tan', '', 'orange', 'heart'),
+('leaf', '', 'grass', 'heart'),
+('onyx', '', 'white', 'pitch'),
+('aurora', '', 'magenta', 'heart'),
+('wolf', '', 'white', 'heart'),
+('neutral', '', 'white', 'soft'),
+('winter', '', 'cyan', 'touch'),
+('sunrise', '', 'magenta', 'touch'),
+('yogurt', '', 'fuchsia', 'touch'),
+('elder', '', 'orange', 'touch'),
+('dim', '', 'white', 'deep'),
+('charcoal', '', 'sky', 'suede'),
+('raisin', '', 'orange', 'pitch'),
+('gunmetal', '', 'sky', 'drab');
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -1,7 +1,7 @@
 <?php
-function sj_core_schema_user_prsgroup (&$schema) {
-  $schema['sj_user_prsgroup'] = array(
-	'description' => 'Persona groups',
+function sj_core_schema_user_persona (&$schema) {
+  $schema['sj_user_persona'] = array(
+	'description' => 'Personas (sub-users)',
 	'primary key' => array ('id'),
 	'indexes' => array ('username', 'name'),
 	'fields' => array(
@@ -22,17 +22,35 @@ function sj_core_schema_user_prsgroup (&$schema) {
 		  'not null' => TRUE,
 		  'default' => '',
 		),
-		'default_pid' => array(
-		  'type' => 'int',
-		  'length' => 4,
+		'grp' => array(
+		  'type' => 'varchar',
+		  'length' => 16,
 		  'not null' => TRUE,
-		  'default' => -1,
+		  'default' => '',
 		),
-		'weight' => array (
+		'signature' => array(
+		  'type' => 'varchar',
+		  'length' => 255,
+		  'not null' => TRUE,
+		  'default' => '',
+		),		
+		'clrsetid' => array (
+		  'type' => 'int',
+		  'size' => 16,
+		  'not null' => FALSE,
+		  'default' => NULL,
+		),
+		'active' => array (
 		  'type' => 'int',
 		  'size' => 1,
 		  'not null' => TRUE,
-		  'default' => 99,
+		  'default' => 1,
+		),
+		'weight' => array (
+		  'type' => 'int',
+		  'size' => 3,
+		  'not null' => TRUE,
+		  'default' => 999,
 		),		
 		'date_added' => array(
 		  'mysql_type' => 'timestamp',
