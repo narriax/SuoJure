@@ -4,6 +4,7 @@ function sj_core_pages_personas_form($form, &$form_state) {
 	
 	sj_core_load_css('personas', 'form');
 	
+	$editmode = false;
 	if (array_key_exists('action', $_GET)) {
 		switch($_GET['action']) {
 			case 'move':
@@ -14,6 +15,9 @@ function sj_core_pages_personas_form($form, &$form_state) {
 				break;
 			case 'crown':
 				$q = db_update('sj_user_prsgroup')->fields(array('default_pid' => $_GET['pid']))->condition('id', $_GET['grp'])->execute();
+				break;
+			case 'editmode':
+				$editmode = $_GET['editmode'];
 				break;
 		}
 	}
@@ -30,6 +34,13 @@ function sj_core_pages_personas_form($form, &$form_state) {
 			t('Personas allow multiple "usernames" to be used by the same profile as well as attaching extra information to the user.').'<br>'. 
 			t('Authoring content and general access rules will respect this subdivision 
 			while still following the parent profile rules as well.').'</div>',
+	);
+	
+
+	$form['links'] = array (
+		'#markup' => '<div class="top-links">'.
+			'<a href="?action=editmode&editmode='.($editmode ? 0 : 1).'">'.($editmode ? t('view') : t('edit')).'</a>'.
+		'</div>',
 	);
 	
 	$clr_types = sjColorSet::get_color_types();
@@ -61,12 +72,13 @@ function sj_core_pages_personas_form($form, &$form_state) {
 	
 	$form['grps'] = array (
 		'#type' => 'fieldset',
-		'#attributes' => array ('class' => array ('section-groups', 'flex-table')),
+		'#attributes' => array ('class' => array ('section-groups', 'flex-table', ($editmode ? 'editmode-on': 'editmode-off'))),
 	);
 		
 	
 	$imgpath = $GLOBALS['base_url'].'/'.drupal_get_path('theme', 'suojure').'/images/';
 	$groups = array_keys($form_state['current_user']->personas);
+	$clrtypes = sjColorSet::get_color_types();
 	
 	$maxcount = 0;
 	for ($g=0; $g < count($groups); $g++)
@@ -74,6 +86,7 @@ function sj_core_pages_personas_form($form, &$form_state) {
 	
 	for ($g=0; $g < count($groups); $g++) { // $form_state['current_user']->personas as $pgrp => $ps) {	
 		$grp_data = $form_state['current_user']->personas[$groups[$g]];
+		if (!$editmode && empty($grp_data->members)) continue;
 		
 		$form['grps']['grp_'.$groups[$g]] = array (
 			'#type' => 'fieldset',
@@ -113,33 +126,62 @@ function sj_core_pages_personas_form($form, &$form_state) {
 					'url' => 'persona?persona='.$pid,
 				),			
 			);
-			if ($g > 0) $items['left'] = array (
-					'text' => t('move left'),
-					'icon' => 'arrow_left.png',
-					'class' => 'persona-move link-left',
-					'tooltip' => t('move left'),
-					'url' => '?action=move&pid='.$pid.'&grp='.$groups[$g-1],
-			);
-			if ($g < count($groups)-1) $items['right'] = array (
-					'text' => t('move right'),
-					'icon' => 'arrow_right.png',
-					'class' => 'persona-move link-right',
-					'tooltip' => t('move right'),
-					'url' => '?action=move&pid='.$pid.'&grp='.$groups[$g+1],
-			);
+			if ($editmode) {
+				if ($g > 0) $items['left'] = array (
+						'text' => t('move left'),
+						'icon' => 'arrow_left.png',
+						'class' => 'persona-move link-left',
+						'tooltip' => t('move left'),
+						'url' => '?action=move&pid='.$pid.'&grp='.$groups[$g-1],
+				);
+				if ($g < count($groups)-1) $items['right'] = array (
+						'text' => t('move right'),
+						'icon' => 'arrow_right.png',
+						'class' => 'persona-move link-right',
+						'tooltip' => t('move right'),
+						'url' => '?action=move&pid='.$pid.'&grp='.$groups[$g+1],
+				);
+			} else {
+				$items['trailing'] = array (
+					'text' => ' &nbsp;',
+					'tooltip' => $items['name']['tooltip'],
+					'url' => $items['name']['url'],
+					'class' => 'persona-trailing',
+				);
+			}
+					
+					
+			$clrs = array();
+			foreach ($clrtypes as $tp =>$typedata) {
+				$clrs[$typedata->name] = 'none';
+				if (isset($pdata->colorset) && array_key_exists($typedata->name, $pdata->colorset->colors)) {
+					$clrs[$typedata->name] = '#'.$pdata->colorset->colors[$typedata->name];
+				}
+			}
+			
 					
 			$line = '';
-			foreach ($items as $itemname => $itemvalues) {
+			foreach ($items as $itemname => $itemvalues) {					
 				$line .= '<a href="'.$itemvalues['url'].'" class="'.$itemvalues['class'].'" title="'.$itemvalues['tooltip'].'">';
 				if (!empty($itemvalues['icon'])) 
 					$line .= '<img src="'.$imgpath.$itemvalues['icon'].'">';
-				if (!empty($itemvalues['text'])) 
-					$line .= '<label>'.$itemvalues['text'].'</label>';
-				$line .= '</a>';
+				if (!empty($itemvalues['text'])) {
+					$style = '';
+					if ($clrs['contrast'] !== 'none') $style .= ' color: '.$clrs['contrast'].';';
+					if ($itemname === 'name') 
+						if ($clrs['secondary'] !== 'none') $style .= ' background: '.$clrs['secondary'].';';
+					if ($itemname === 'trailing')
+						if ($clrs['aux'] !== 'none') $style .= ' background: '.$clrs['aux'].';';
+					
+					$line .= '<label style="'.$style.'">'.$itemvalues['text'].'</label>';					
+				}
+				$line .= '</a> ';
 			}
+
 			
 			$form['grps']['grp_'.$groups[$g]]['p_'.$pid] = array (
-				'#markup' => '<div class="persona-line '.($pdata->active ? 'active' : 'inactive').'">'.$line.'</div>'
+				'#markup' => '<div class="persona-line '.($pdata->active ? 'active' : 'inactive').'" '.
+					'style="background: '.$clrs['primary'].'">'.$line.'</div>'
 			);
 		}
 		for ($i=count($pkeys); $i < $maxcount; $i++)
@@ -151,64 +193,67 @@ function sj_core_pages_personas_form($form, &$form_state) {
 			'#attributes' => array ('class' => array ('persona-line')),
 		);
 
-		$form['grps']['grp_'.$groups[$g]]['_new']['grp_'.$groups[$g].'__new'] = array (
-			//'#title' => '+'.t('New Persona'),
+		if ($editmode)
+			$form['grps']['grp_'.$groups[$g]]['_new']['grp_'.$groups[$g].'__new'] = array (
+				//'#title' => '+'.t('New Persona'),
+				'#type' => 'textfield',
+				'#maxlength' => 16,
+			);
+	}
+	if ($editmode)
+		$form['btnsave'] = array(
+			'#type' => 'submit',
+			'#value' => t('Save Personas'),
+			'#prefix' => '<br>',
+			'#default' => true,
+		);	
+	
+	if ($editmode) {
+		
+		$form['grplist'] = array (
+			'#type' => 'fieldset',
+			'#title' => t('Groups'),
+			'#collapsible' => true,
+			'#attributes' => array ('class' => array ('persona-group-list')),
+		);
+		$groups = array('-1' => 'None');
+		foreach ($form_state['current_user']->personas as $pgrp => $ps) {
+			if ($pgrp == -1) continue;
+				
+			$form['grplist']['grp_'.$pgrp] = array (
+				'#type' => 'fieldset',
+				//'#title' => $ps->name,
+			);
+			$form['grplist']['grp_'.$pgrp]['grp_'.$pgrp.'_name'] = array (
+				'#type' => 'textfield',
+				'#title' => t('Name'),
+				'#default_value' => $ps->name,
+				'#attributes' => array ('class' => array ('persona-group-line')),
+			);
+			$form['grplist']['grp_'.$pgrp]['grp_'.$pgrp.'_weight'] = array (
+				'#type' => 'select',
+				'#title' => t('Weight'),
+				'#options' => $weght_options,
+				'#default_value' => $ps->weight,
+				'#attributes' => array (
+					'class' => array ('persona-group-line'),
+				),
+			);	
+		}	
+		
+		$form['grplist']['grp__new'] = array (
+			'#type' => 'fieldset',
+		);
+		$form['grplist']['grp__new']['new_group_newname'] = array (
+			'#title' => '+'.t('New Group'),
 			'#type' => 'textfield',
 			'#maxlength' => 16,
 		);
-	}
-	$form['btnsave'] = array(
-		'#type' => 'submit',
-		'#value' => t('Save Personas'),
-		'#prefix' => '<br>',
-		'#default' => true,
-	);	
-	
-	
-	$form['grplist'] = array (
-		'#type' => 'fieldset',
-		'#title' => t('Groups'),
-		'#collapsible' => true,
-//		'#collapsed' => true,
-		'#attributes' => array ('class' => array ('persona-group-list')),
-	);
-	$groups = array('-1' => 'None');
-	foreach ($form_state['current_user']->personas as $pgrp => $ps) {
-		if ($pgrp == -1) continue;
-			
-		$form['grplist']['grp_'.$pgrp] = array (
-			'#type' => 'fieldset',
-			//'#title' => $ps->name,
-		);
-		$form['grplist']['grp_'.$pgrp]['grp_'.$pgrp.'_name'] = array (
-			'#type' => 'textfield',
-			'#title' => t('Name'),
-			'#default_value' => $ps->name,
-			'#attributes' => array ('class' => array ('persona-group-line')),
-		);
-		$form['grplist']['grp_'.$pgrp]['grp_'.$pgrp.'_weight'] = array (
-			'#type' => 'select',
-			'#title' => t('Weight'),
-			'#options' => $weght_options,
-			'#default_value' => $ps->weight,
-			'#attributes' => array (
-				'class' => array ('persona-group-line'),
-			),
+		$form['grplist']['save_groups'] = array(
+			'#type' => 'submit',
+			'#value' => t('Save Groups'),
 		);	
-	}	
-	
-	$form['grplist']['grp__new'] = array (
-		'#type' => 'fieldset',
-	);
-	$form['grplist']['grp__new']['new_group_newname'] = array (
-		'#title' => '+'.t('New Group'),
-		'#type' => 'textfield',
-		'#maxlength' => 16,
-	);
-	$form['grplist']['save_groups'] = array(
-		'#type' => 'submit',
-		'#value' => t('Save Groups'),
-	);	
+	}
 	
 	return $form;
 }

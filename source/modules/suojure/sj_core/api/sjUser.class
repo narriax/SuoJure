@@ -144,6 +144,10 @@ class sjUser {
 			if (!isset($r->grp) || !array_key_exists($r->grp, $this->personas)) {
 				$r->grp = -1;
 			}				
+			if (isset($r->clrsetid) && $r->clrsetid > 0) {
+				$r->colorset = new sjColorSet($r->clrsetid);
+			}
+			unset($r->clrsetid);
 			
 			$this->personas[$r->grp]->members[$r->id] = $r;
 		}

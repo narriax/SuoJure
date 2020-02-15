@@ -5,16 +5,50 @@
 #block-sj-core-sj-core-personas .menu-group {
 	display: inline-block;
 	padding: 0.25em 1em;
+	position: relative;
+	color: rgba(255,255,255,0.75);
+}
+#block-sj-core-sj-core-personas:hover .menu-group {
+	color: white;
 }
 #block-sj-core-sj-core-personas .menu-group-container {
 	position: absolute;
+	display:none;
+	padding: 50px;
+	padding-top: 4px;
+	left: -40px;
 }
-#block-sj-core-sj-core-personas .menu-link {
+#block-sj-core-sj-core-personas:hover .menu-group-container {
+	display:block;
+}
+#block-sj-core-sj-core-personas .link-holder,
+#block-sj-core-sj-core-personas .current-item {
 	display: inline-block;
 	padding: 0.25em 1em;
 }
-#block-sj-core-sj-core-personas .menu-group .menu-link {
+#block-sj-core-sj-core-personas .current-item:before,
+#block-sj-core-sj-core-personas .current-item:after {
+	content: " - ";
+}
+#block-sj-core-sj-core-personas .menu-link {
+	display: inline-block;
+	z-index: 9999999999;
+}
+#block-sj-core-sj-core-personas .menu-group .link-holder {
 	display: block;
+	background: rgba(0.05,0.05,0.05,0.3);
+	min-height: 1em;
+	width: 4em;
+	position: relative;
+}
+#block-sj-core-sj-core-personas .menu-group .menu-link {
+	position: absolute;
+	left: 0;
+	width: 100%;
+	text-align: center;
+}
+#block-sj-core-sj-core-personas .menu-holder.selected {
+	background: rgba(0,0,1,.75);
 }
 #block-sj-core-sj-core-personas .menu-link.has-icon {
 	padding: 0.25em 0.5em;
@@ -33,11 +67,10 @@
 
 #block-sj-core-sj-core-personas a label {
 	cursor: pointer;
+	
 }
 #block-sj-core-sj-core-personas a:hover label {
 	text-decoration: underline;
 }
 
-#block-sj-core-sj-core-personas a.selected {
-	background: rgba(0,0,0,0.2);
-}
+

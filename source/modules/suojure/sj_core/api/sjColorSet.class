@@ -1,61 +1,189 @@
 <?php
 
 class sjColorSet {
+	public $setid;
+	public $colors;
 	
-	
-	static function get_color_types ($full = false) {
-		if ($full)
-			return db_select('sj_clrtype', 'ct')->fields('ct', array())->orderBy('weight')->execute()->fetchAllAssoc('name');
-		else
-			return db_select('sj_clrtype', 'ct')->fields('ct', array('name'))->orderBy('weight')->execute()->fetchCol('name');
+	function __construct ($setid) {
+		$this->setid = $setid;
+		
+		$q = db_select('sj_clrset_clrs', 'sets')
+		   -> fields ('sets', array('clr'));
+		$q -> leftJoin('sj_clrtype', 'types', 'types.name=sets.clrtype');
+		$q -> addField('types', 'name', 'clrtype');
+		$q -> condition ('sets.clrsetid', $setid);
+		$this->colors = $q -> execute() -> fetchAllKeyed (1, 0);
 	}
 	
-	static function get_color_families() {
-		return db_select('sj_clrfamily', 'ct')->fields('ct', array('name', 'baseclr'))->orderBy('weight')->execute()->fetchAllKeyed(0,1);
+	
+	
+	static function get_color_types () {
+		$colors = sjvar('colors', array());
+		if (!array_key_exists('types', $colors)) {
+			$colors['types'] = db_select('sj_clrtype', 'ct')->fields('ct', array())->orderBy('weight')->execute()->fetchAllAssoc('name');
+			sjvar_set('colors', $colors);
+		}
+		return $colors['types'];
 	}
 	
-	static function get_color_shades($full = false) {
-		if ($full) {
-			$q = db_select('sj_clrshades', 'cs')->fields('cs', array());
-			$q ->leftjoin('sj_clr', 'c', 'c.shade=cs.name');
-			$q ->addField('c', 'name', 'clrname');
-			$q ->fields('c', array('family', 'color'));
-			$q ->orderBy('weight')->orderBy('family')->orderBy('clrname');
-			$raw = $q->execute()->fetchAll();
+	
+	static function get_color_families() { 
+		$colors = sjvar('colors', array());
+		if (!array_key_exists('families', $colors)) {
+			$colors['families'] = db_select('sj_clrfamily', 'ct')->fields('ct', array('name', 'baseclr'))->orderBy('weight')->execute()->fetchAllKeyed(0,1);
+			sjvar_set('colors', $colors);
+		}
+		return $colors['families'];
+	}
+	
+	
+	static function get_color_table() { 
+		$colors = sjvar('colors', array());
+		if (!array_key_exists('table', $colors)) {
+			$fams = sjColorSet::get_color_families();
+			$shades = sjColorSet::get_color_shades();		
 			
-			$list = array ();
-			foreach ($raw as $r) {
-				if (!array_key_exists($r->name, $list)) {
-					$list[$r->name] = new stdClass();
-					$list[$r->name]->name = $r->name;
-					$list[$r->name]->math = $r->math;
-					$list[$r->name]->weight = $r->weight;
-					$list[$r->name]->colors = array();
-				}
-				if (!empty($r->clrname)) {
-					if (!array_key_exists($r->family, $list[$r->name]->colors)) 
-						$list[$r->name]->colors[$r->family] = array();
-					$list[$r->name]->colors[$r->family][$r->clrname] = $r->color;
+			$colors = sjvar('colors', array());
+			$colors['table'] = array();
+			foreach ($fams as $f => $basclr) {
+				$colors['table'][$f] = array();
+				foreach ($shades as $sh => $shdata) {
+					$colors['table'][$f][$sh] = new stdClass();
+					$colors['table'][$f][$sh]->name = '';
+					$colors['table'][$f][$sh]->color = sjColorSet::alter_color($basclr, $shdata->math);
 				}
 			}
-			return $list;
-		} else 
-			return db_select('sj_clrshades', 'cs')->fields('cs', array('name', 'math'))->orderBy('weight')->execute()->fetchAllKeyed(0,1);
+			
+			$whites = array();
+			foreach ($colors['table']['white'] as $sh => $clr) {
+				$sortkey = str_replace('#', '', $clr->color);
+				$sortkey = str_pad(sjColorSet::hex_to_rgb($sortkey)[0], 3, '0', STR_PAD_LEFT);
+				$sortkey = $sortkey.'_'.$sh;
+				$whites[$sortkey] = array($sh => $clr);
+			}
+			krsort($whites);
+			$colors['table']['white'] = array();
+			foreach ($whites as $sortkey => $content) {
+				foreach ($content as $sh => $clr)
+				$colors['table']['white'][$sh] = $clr;
+			}
+			
+			$named_clrs = sjColorSet::get_colors();
+			foreach ($named_clrs as $clrname => $clr) {
+				$colors['table'][$clr->family][$clr->shade]->name = $clr->name;
+			}
+			sjvar_set('colors', $colors);
+		}
+		return $colors['table'];
+	}
+	
+	
+	static function get_color_shades() {
+		// = db_select('sj_clrshades', 'cs')->fields('cs', array('name', 'math'))->orderBy('weight')->execute()->fetchAllKeyed(0,1);
+
+		$colors = sjvar('colors', array());
+		if (array_key_exists('shades', $colors)) 
+			return $colors['shades'];
+		
+		$q = db_select('sj_clrshades', 'cs')->fields('cs', array());
+		//$q ->leftjoin('sj_clr', 'c', 'c.shade=cs.name');
+		//$q ->addField('c', 'name', 'clrname');
+		//$q ->fields('c', array('family', 'color'));
+		$q ->orderBy('weight');//->orderBy('family')->orderBy('clrname');
+		$raw = $q->execute()->fetchAll();
+		
+		$colors['shades'] = array ();
+		foreach ($raw as $r) {
+			if (!array_key_exists($r->name, $colors['shades'])) {
+				$colors['shades'][$r->name] = new stdClass();
+				$colors['shades'][$r->name]->name = $r->name;
+				$colors['shades'][$r->name]->math = $r->math;
+				$colors['shades'][$r->name]->weight = $r->weight;
+				//$colors['shades'][$r->name]->colors = array();
+			}
+			/*
+			if (!empty($r->clrname)) {
+				if (!array_key_exists($r->family, $colors['shades'][$r->name]->colors)) 
+					$colors['shades'][$r->name]->colors[$r->family] = array();
+				$colors['shades'][$r->name]->colors[$r->family][$r->clrname] = $r->color;
+			}*/
+		}
+		
+		sjvar_set('colors', $colors);
+		return $colors['shades'];
 	}	
+	
 	
 	static function get_colors($family = '') {
 		$q = db_select('sj_clr', 'c')
 		   ->fields('c', array('name', 'color', 'shade'));		   
 		$q->join('sj_clrfamily', 'cf', 'c.family=cf.name');
+		$q->join('sj_clrshades', 'csh', 'c.shade=csh.name');
 		$q->addField('cf', 'name', 'family');
 		$q->addField('cf', 'weight', 'familyweight');
+		$q->addField('cf', 'baseclr', 'family_base');
+		$q->addField('csh', 'math', 'shade_math');
 		$q->orderBy('cf.weight');
 		
-		if (!empty($family))
+		if (!empty($family)) 
 			$q->condition('c.family', $family);
 		
-		return $q->execute()->fetchAllAssoc('name');
+		$arr = $q->execute()->fetchAllAssoc('name');
+		foreach ($arr as $name => $data) {
+			if (empty($data->color)) {
+				$data->color = sjColorSet::alter_color($data->family_base, $data->shade_math);
+			}
+		}
+		
+		return $arr;
 	}
+	
+	
+
+	static function palette_widget ($id, $title, $default_val) {
+		$table = sjColorSet::get_color_table();
+		if ($default_val[0] !== '#') $default_val = '#'.$default_val;
+	
+		$radios = '';
+		foreach ($table as $fam => $shlist) {
+			$radios .= '<div class="palette-row family-'.$fam.'" style="width: '.((count($shlist)+1)*16).'px;">';
+			foreach ($shlist as $sh => $clr) {
+				$compl = sjColorSet::label_color($clr->color);
+				$radios .= '<div class="palette-radio" value="'.$clr->color.'" '.
+					'style="background: #'.$clr->color.'; background-img: url();" '.
+					'title="'.(empty($clr->name)?'':$clr->name.' - ').'#'.$clr->color.'"
+					onclick="'.
+						'var el=document.getElementById(\''.$id.'\'); '.
+						'el.value=\'#'.$clr->color.'\'; '.
+						'el.parentNode.parentNode.style.background=\'#'.$clr->color.'\'; '.
+						'(el.parentNode.getElementsByTagName(\'LABEL\')[0]).style.color=\'#'.$compl.'\'; '.
+						'el = parentNode.parentNode.getElementsByTagName(\'LABEL\')[0]; '.
+						'el.innerHTML=\'&nbsp; '.$clr->name.'\'; '.
+						'el.style.color=\'#'.$compl.'\'; '.
+						'el.style.background=\'#'.$clr->color.'\'; '.
+						'"></div>';
+			}
+			$radios .= '</div>';
+		}
+	
+		return array (
+			//'#type' => 'jquery_colorpicker',
+			'#type' => 'textfield',
+			'#title' => $title,
+			'#default_value' => $default_val,
+			'#attributes' => array(
+				'class' => array('palette-picker'),
+				'onfocus' => 
+					'if (this.parentNode.className.indexOf(\' show\') > -1) '.
+					'	this.parentNode.className = this.parentNode.className.replace(\' show\', \'\'); '.
+					'else this.parentNode.className += \' show\'; ',
+				//'onfocusout' => 'this.parentNode.className = this.parentNode.className.replace(\' show\',\'\');',
+			),
+			'#field_suffix' => '<div class="palette-picker-palette"><label>&nbsp;</label>'.$radios.'</div>',
+			'#maxlength' => 7,
+		);
+	}
+	
 	
 	
 	static function rgb_to_hex ($rgb) {

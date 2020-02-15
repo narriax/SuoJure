@@ -2,6 +2,13 @@
 	max-width: 10em;
 }
 
+#sj-core-pages-personas-form .top-links {
+	margin: 1em;
+	margin-top: -5em;;
+	text-align: right;
+	float: right;
+}
+
 .section-groups,
 .section-groups  .fieldset-wrapper {
 	border: 0;
@@ -50,11 +57,28 @@ fieldset.persona-group {
 	margin-bottom: 2em;
 	position: relative;
 }
+.editmode-off fieldset.persona-group {
+	border: 0;
+}
+fieldset.persona-group legend {
+	font-weight: bold;
+}
+.editmode-off fieldset.persona-group legend {
+	background: none;
+	border: 0;
+	display: block;
+	position: relative;
+}
 fieldset.persona-group .fieldset-wrapper {
 	margin: 0.5em 0;
 	padding: 0.5em;
 	padding-top: 1.2em;
 }
+.editmode-off fieldset.persona-group .fieldset-wrapper {
+	margin-top: 0em;
+}
+
+
 fieldset.persona-group .persona-line {
 	padding: 0;
 	border: 0;
@@ -62,9 +86,11 @@ fieldset.persona-group .persona-line {
 	display: block;
 	position: relative;
 }
-fieldset.persona-group .persona-line .persona-name {
+.editmode-off fieldset.persona-group .persona-line {
+	height: 50px;
 	line-height: 1.2em;
 }
+
 
 
 fieldset.persona-group a img {
@@ -74,11 +100,40 @@ fieldset.persona-group a img {
 fieldset.persona-group a:hover img {
 	filter: opacity(75%);
 }
-fieldset.persona-group .persona-line label {
+fieldset.persona-group .persona-line a {
 	display: inline-block;
 	font-weight: normal;
 	cursor: inherit;
+	margin-top: 15px;
+	vertical-align: middle;
 }
+.editmode-off fieldset.persona-group .persona-line a.persona-name {
+	margin: 0;
+	vertical-align: top;
+}
+
+.editmode-off fieldset.persona-group .persona-line label {
+	vertical-align: middle;
+}
+
+.editmode-off fieldset.persona-group .persona-line .persona-name label {
+	width: 50%;
+	height: 34px;
+	position: absolute;
+	right: 30px;
+	margin: 4px;
+	padding: 4px;
+}
+.editmode-off fieldset.persona-group .persona-line .persona-trailing label {
+	width: 20px;
+	height: 34px;
+	position: absolute;
+	right: 0px;
+	top: 0;
+	margin: 4px;
+	padding: 4px;
+}
+
 fieldset.persona-group .persona-line img + label {
 	display: none;
 }
@@ -100,7 +155,8 @@ fieldset.persona-group .persona-crown {
 	display: inline-block;
 	text-align: center;
 	font-weight: bold;
-	
+	font-size:1.2em;
+	height: 1.5em;	
 }
 fieldset.persona-group .persona-active {
 	color: #595;
@@ -110,8 +166,11 @@ fieldset.persona-group .persona-active {
 fieldset.persona-group .persona-crown {
 	margin-left: 1.25em;
 	color: #d89f00;
-	font-size:1.2em;
 }
+.editmode-off fieldset.persona-group .persona-crown {
+	margin-left: 0.25em;
+}
+
 fieldset.persona-group .persona-active:hover,
 fieldset.persona-group .persona-crown:hover {
 	text-decoration: none;
@@ -122,7 +181,7 @@ fieldset.persona-group .persona-active:hover {
 }
 fieldset.persona-group .persona-crown:hover {
 	color: #a00;
-	background: #efddad;
+	background: rgba(255,255,100,0.5);
 }
 
 fieldset.persona-group .link-left {

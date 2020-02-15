@@ -21,3 +21,56 @@
 .view-line label {
 	display: inline-block;
 }
+
+#edit-color-set {
+	margin: 3em 0 1em 0;
+}
+#edit-color-set .fieldset-wrapper {
+	text-align: right;
+}
+
+.color-block {
+	display: inline-block;
+	margin-right: 0.5em;
+	padding: 0.5em;
+	vertical-align: top;
+	height: 40px;
+	width: 140px;
+	-webkit-clip-path: polygon(20px 0, 100% 0, 132px 100%, 0 100%);
+	clip-path: polygon(20px 0, 100% 0, 132px 100%, 0 100%);
+}
+.color-block.color-block-edit {
+	-webkit-clip-path: none;
+	clip-path: none;
+	position: relative;
+	width: 150px;
+}
+
+.color-block .form-item {
+	display: block;
+    position: static;
+    margin: 0 1.5em;
+}
+.color-block .form-item .jquery_colorpicker {
+	margin-top: -1em;
+}
+
+.color-block.type-secondary {
+	width: 300px;
+	-webkit-clip-path: polygon(20px 0, 100% 0, 292px 100%, 0 100%);
+	clip-path: polygon(20px 0, 100% 0, 292px 100%, 0 100%);
+}
+.color-block.color-block-edit.type-secondary {
+	-webkit-clip-path: none;
+	clip-path: none;
+}
+
+.color-block label {
+	display: block;
+	text-align: center;
+	font-weight: normal;
+	font-style: italic;
+}
+#edit-btn-save {
+	margin-top: 1em;
+}

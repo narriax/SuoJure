@@ -1,0 +1,23 @@
+.one-type-line,
+form .half-pane .form-wrapper div.fieldset-wrapper,
+form .half-pane .form-wrapper div.one-type-line {
+	width: 100% !important;
+	max-width: 100% !important;
+}
+.one-type-line .form-item,
+.one-type-line .form-item label  { 
+	display: inline-block;
+}
+ 
+form .form-type-textfield,
+form .form-type-textfield input,
+form .half-pane .form-wrapper div {
+	max-width: 30em !important;
+}
+label {
+	min-width: 8em;
+}
+select,
+.form-type-select {
+	width: 3em;
+}

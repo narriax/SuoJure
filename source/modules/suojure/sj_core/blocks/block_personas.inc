@@ -4,7 +4,8 @@ function sj_core_personas_block () {
 	if (!user_access('access content')) 
 		return '';
 	
-	drupal_add_css(drupal_get_path('module', 'sj_core').'/blocks/block_personas.css');
+	sj_core_load_css('block_personas', 'block');
+	//drupal_add_css(drupal_get_path('module', 'sj_core').'/blocks/block_personas.css');
 	
 	$usr = new sjUser();
 	if (!isset($usr)) 
@@ -12,13 +13,29 @@ function sj_core_personas_block () {
 
 	// ======================
 
-	if (array_key_exists('persona', $_GET) && $_GET['persona'] != sjvar('persona')) {
+	$curp = sjvar('persona', '');
+	$defp = $usr->get_default_persona();
+	
+	if (array_key_exists('clearache', $_GET)) {
+		sjvar_set('persona', $defp);
+		$curp = $defp;
+	} else if (array_key_exists('persona', $_GET) && $_GET['persona'] != $curp) {
 		sjvar_set('persona', $_GET['persona']);
+		$curp = $_GET['persona'];
 		header("Refresh:0");
+	} else {
+		if (empty($curp)) {
+			$defp = $usr->get_default_persona();
+			if (!empty($defp)) {
+				sjvar_set('persona', $defp);
+				$curp = $defp;
+				header("Refresh:0");
+			}
+		}
 	}
 	
 	$currents = array(
-		'personas' => '?persona='.sjvar('persona', $usr->get_default_persona()),
+		'personas' => array ('name' => '', 'url' => '?persona='.$curp),
 	);
 
 	// ======================
@@ -38,8 +55,7 @@ function sj_core_personas_block () {
 		),
 		'personas' => array (),
 	);
-
-
+	
 		
 	foreach ($usr->personas as $pgrp => $ps) {
 		if (empty($ps->members)) continue;
@@ -53,6 +69,7 @@ function sj_core_personas_block () {
 		$links['personas'][$ps->name] = array();
 		foreach ($pkeys as $pid => $w) {
 			$pdata = $ps->members[$pid];
+			if ($pid == $curp) $currents['personas']['name'] = $pdata->name;
 			if (!$pdata->active) continue;
 			$links['personas'][$ps->name]['?persona='.$pid] = array ('#text' => $pdata->name);
 		}
@@ -74,13 +91,17 @@ function sj_core_personas_block () {
 	$content = '';
 	foreach ($links as $menuname => $menucontent) {
 		$content .= '<div id="menu-'.$menuname.'" class="menu-line">'.PHP_EOL;
+					
+		if (array_key_exists($menuname, $currents))
+			$content .= '<div class="current-item"><label>'.$currents[$menuname]['name'].'</label></div>'.PHP_EOL;
+		
 		foreach ($menucontent as $grpname => $grpcontent) {
 			if (!empty($grpname)) {
 				$content .= '<div id="menu-grp-'.$grpname.'" class="menu-group">'.
 					'<label class="menu-group-name">'.$grpname.'</label>'.PHP_EOL;
-				$content .= '<div id="menu-grp-'.$grpname.'-container" class="menu-group-container">';
+				$content .= '<ul id="menu-grp-'.$grpname.'-container" class="menu-group-container">';
 			}
-			
+		
 			foreach ($grpcontent as $linkurl => $link) {
 				$linktext = '';
 				$linkicon = '';
@@ -91,17 +112,17 @@ function sj_core_personas_block () {
 				else $linktooltip = $linktext;
 				if ($linkurl[0] !== '?') $linkurl = $GLOBALS['base_url'].'/'.$linkurl;
 
-				$cls = 'menu-link';
+				$cls = '';
 				if (!empty($linkicon)) $cls .= ' has-icon';
-				if (array_key_exists($menuname, $currents) && $currents[$menuname] == $linkurl)
+				if (array_key_exists($menuname, $currents) && $currents[$menuname]['url'] == $linkurl)
 					$cls .= ' selected';
 				
 				
-				$content .= '<a href="'.$linkurl.'" class="'.$cls.' title="'.$linktooltip.'">'.
+				$content .= '<li class="link-holder '.$cls.'">&nbsp;<a href="'.$linkurl.'" class="menu-link '.$cls.'" title="'.$linktooltip.'">'.
 					$linkicon.
-					'<label class="menu-link-name">'.$linktext.'</label></a>';
+					'<label class="menu-link-name">'.$linktext.'</label></a></li>';
 			}
-			if (!empty($grpname)) $content .= '</div></div><!-- end of menu-grp-'.$grpname.' -->'.PHP_EOL;
+			if (!empty($grpname)) $content .= '</ul></div><!-- end of menu-grp-'.$grpname.' -->'.PHP_EOL;
 		}
 		$content .= '</div><!-- end of menu-'.$menuname.' -->'.PHP_EOL;
 	}

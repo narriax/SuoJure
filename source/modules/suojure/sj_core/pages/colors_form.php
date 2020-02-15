@@ -5,6 +5,7 @@ function sj_core_pages_colors_form ($form, &$form_state) {
 
 	sj_core_load_css('colors', 'form');
 	 
+	unset($_SESSION['sj']['colors']);
 	$clr_families = sjColorSet::get_color_families();
 	$clr_shades = sjColorSet::get_color_shades(true);
 	$clrs = sjColorSet::get_colors();
@@ -187,32 +188,28 @@ function sj_core_pages_colors_form_validate ($form, &$form_state) {
 					form_set_error($errpath.$name_el, t('Name cannot be empty'));
 				} else {
 					$changes['insert'][''] = $form_state['values'][$name_el];
-					//$changes['color'] = $form_state['values'][$color_el];
-					//
 				}			
 				break;
 			} else if ($form_state['triggering_element']['#id'] == 'edit-clrs-'.$f.'-save') {
 				$changes['family'] = $f;
 				
 				$allclrs = sjColorSet::get_colors();
-				$clrs = sjColorSet::get_colors($f);
-				$clr_shades = sjColorSet::get_color_shades(true);
-				//dpm($clrs);
+				$table = sjColorSet::get_color_table();
+				//var_dump($table);
 			
-				foreach ($clr_shades as $sh => $shdata) {
-					$old = '';
-					if (array_key_exists($f, $shdata->colors)) 
-						$old = array_keys($shdata->colors[$f])[0];
+				foreach ($table as $f => $shlist) {
+					foreach ($shlist as $sh => $colordata) {
+						$old = $colordata->name;						
+						$new = strtolower($form_state['values']['clrs_'.$f.'_'.$sh.'_name']);
 						
-					$new = strtolower($form_state['values']['clrs_'.$f.'_'.$sh.'_name']);
-					
-					if (empty($old) && !empty($new)) {
-						$changes['insert'][$sh] = $new;
-					} else if (!empty($old) && empty($new)) {
-						$changes['delete'][$sh] = $f;
-						unset($allclrs[$old]);
-					} else if ($old != $new) {
-						$changes['update'][$sh] = $new;
+						if (empty($old) && !empty($new)) {
+							$changes['insert'][$sh] = $new;
+						} else if (!empty($old) && empty($new)) {
+							$changes['delete'][$sh] = $f;
+							unset($allclrs[$old]);						
+						} else if ($old != $new) {
+							$changes['update'][$sh] = $new;
+						}
 					}
 				}
 				

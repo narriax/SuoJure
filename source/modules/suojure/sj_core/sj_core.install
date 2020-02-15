@@ -1,275 +1,80 @@
 <?php
 
-function dex_to_hex($dex) {
-	if ($dex < 0) return '0';
-	if ($dex > 15) return 'f';
-	$dex = round($dex);
-	switch ($dex) {
-		case 10: return 'a';
-		case 11: return 'b';
-		case 12: return 'c';
-		case 13: return 'd';
-		case 14: return 'e';
-		case 15: return 'f';
-		default: return $dex.'';
-	}
-}
-
 function sj_core_install() {
-	
-	$q = db_insert('sj_clrtype') -> fields(array ('name', 'weight'));
-	$q -> values (array ('name' => 'primary', 'weight' => 1));
-	$q -> values (array ('name' => 'secondary', 'weight' => 2));
-	$q -> values (array ('name' => 'aux', 'weight' => 3));
-	$q->execute();
-	
-	$q = db_insert('sj_clrshades') -> fields(array ('name', 'math', 'weight'));
-	$q -> values (array ('name' => 'offwhite', 'math' => 'n+(max-n)*0.85', 'weight' => 10));
-	$q -> values (array ('name' => 'pastel', 'math' => 'n+(max-n)*0.6', 'weight' => 20));
-	$q -> values (array ('name' => 'pure', 'math' => '', 'weight' => 30));
-	$q -> values (array ('name' => 'gem', 'math' => 'n/2', 'weight' => 40));
-	$q -> values (array ('name' => 'dark', 'math' => 'n/4', 'weight' => 50));
-	$q -> values (array ('name' => 'deep', 'math' => 'n/8', 'weight' => 60));
-	
-	$q -> values (array ('name' => 'suede', 'math' => 'n/15+max/10', 'weight' => 70));
-	$q -> values (array ('name' => 'drab', 'math' => 'n/15+max/4', 'weight' => 80));
-	$q -> values (array ('name' => 'soft', 'math' => 'n/15+max/2', 'weight' => 90));
-	$q -> values (array ('name' => 'light', 'math' => 'n/15+max/1.5', 'weight' => 100));
-	$q->execute();	
-
-	$colors = array (
-		'red' => 	  array('base' => array(16, 0, 0), 	'dark' => 'maroon', 	'pastel'=>'rose'),
-		'orange' =>   array('base' => array(16, 9, 0), 	'dark' => 'brown', 		'pastel'=>'salmon'),
-		'yellow' =>   array('base' => array(16,16, 0), 	'dark' => 'bile', 		'pastel'=>'canary'),
-		'grass' => 	  array('base' => array(9,16, 0), 	'dark' => 'swamp', 		'pastel'=>'tea'),
-		'lime' => 	  array('base' => array( 0,16, 0), 	'dark' => 'green', 		'pastel'=>'eco'),
-		'leygreen' => array('base' => array( 0,16,10), 	'dark' => 'forest', 	'pastel'=>'aero'),
-		'cyan' => 	  array('base' => array( 0,14,16), 	'dark' => 'teal', 		'pastel'=>'ice'),
-		'sky' => 	  array('base' => array( 0,10,16), 	'dark' => 'sea', 		'pastel'=>'babyblue'),
-		'blue' => 	  array('base' => array( 0, 4,16), 	'dark' => 'navy', 		'pastel'=>'powder'),
-		'violet' =>   array('base' => array( 8, 0,16), 	'dark' => 'universe', 	'pastel'=>'lavender'),
-		'magenta' =>  array('base' => array(12, 0,16), 	'dark' => 'purple', 	'pastel'=>'lace'),
-		'fuchsia' =>  array('base' => array(16, 0,10),  'dark' => 'wine', 		'pastel'=>'pink'),
-		'white' =>    array('base' => array(16,16,16),  'dark' => 'gray'),
-	);
-	$color_keys = array_keys($colors);
-
-	$qf = db_insert('sj_clrfamily') -> fields(array ('name', 'baseclr', 'weight'));
-	$qc = db_insert('sj_clr') -> fields(array ('name', 'family', 'shade', 'color'));
-	
-	for ($c=0; $c < count($color_keys); $c++) {
-		$data = $colors[$color_keys[$c]];
-
-		$clr = '';
-		$clrl = '';
-		$clrd = '';
-		foreach ($data['base'] as $code) {
-			$n = max($code-1,0);
-			$m = max($data['base']);
-			
-			$clr .= dex_to_hex($n).dex_to_hex($n);
-			$clrd .= '';//dex_to_hex($n/2).dex_to_hex($n/2);
-			$clrl .= '';//dex_to_hex($n + ($m-$n)*0.6).dex_to_hex($n + ($m-$n)*0.6);
-		} 
-
-		$qf -> values (array ('name' => $color_keys[$c], 'weight' => ($c+1), 'baseclr' => $clr));
-		$qc -> values (array ('name' => $color_keys[$c], 'family' => $color_keys[$c], 'shade' => 'pure', 'color' => $clr));
-		$qc -> values (array ('name' => $data['dark'], 'family' => $color_keys[$c], 'shade' => 'dark',  'color' => $clrd));
-		$qc -> values (array ('name' => $data['pastel'], 'family' => $color_keys[$c], 'shade' => 'pastel',  'color' => $clrl));
+	$files = scandir(drupal_get_path('module', 'sj_core').'/install/data');
+	foreach ($hooks as $hook) {
+		if ($hook === '.' || $hook === '..') continue;
+		$tokens = explode('.', $hook);
+		module_load_include ($tokens[1], 'sj_core', 'install/data/'.$tokens[0]);
 	}
-	$qf->execute();
-	$qc->execute();
 }
-
-
-
 
 
 function sj_core_schema() {
-  $schema = array();
-  sj_core_schema_colors($schema);
-  sj_core_schema_users($schema);
-
-  return $schema;
+	$schema = array();
+	$files = scandir(drupal_get_path('module', 'sj_core').'/install/schema');
+	foreach ($files as $f) {
+		if ($f === '.' || $f === '..') continue;
+		$tokens = explode('.', $f);
+		module_load_include ($tokens[1], 'sj_core', 'install/schema/'.$tokens[0]);
+		$eval = 'sj_core_schema_'.substr($tokens[0],3).'($schema);';
+		eval($eval);
+	}
+	return $schema;
 }
 
-function sj_core_schema_colors(&$schema) {
-	
-  $schema['sj_clrtype'] = array(
-	'description' => 'Color types',
-	'primary key' => array ('name'),
-	'fields' => array(
-		'name' => array(
-		  'type' => 'varchar',
-		  'size' => 16,
-		  'not null' => TRUE,
-		),
-		'description' => array (
-		  'type' => 'text',
-		  'not null' => FALSE,
-		),
-		'weight' => array(
-		  'type' => 'int',
-		  'size' => 2,
-		  'not null' => TRUE,
-		),		
-	),
-  ); 	
-	
-  $schema['sj_clrfamily'] = array(
-	'description' => 'Color Families',
-	'primary key' => array ('name'),
-	'fields' => array(
-		'name' => array(
-		  'type' => 'varchar',
-		  'size' => 16,
-		  'not null' => TRUE,
-		),
-		'baseclr' => array(
-		  'type' => 'varchar',
-		  'size' => 6,
-		  'not null' => TRUE,
-		),		
-		'weight' => array(
-		  'type' => 'int',
-		  'size' => 2,
-		  'not null' => TRUE,
-		),
-	),
-  );	
-	
-  $schema['sj_clrshades'] = array(
-	'description' => 'Color Shades',
-	'primary key' => array ('name'),
-	'fields' => array(
-		'name' => array(
-		  'type' => 'varchar',
-		  'size' => 16,
-		  'not null' => TRUE,
-		),
-		'math' => array(
-		  'type' => 'varchar',
-		  'size' => 32,
-		  'not null' => TRUE,
-		),		
-		'weight' => array(
-		  'type' => 'int',
-		  'size' => 2,
-		  'not null' => TRUE,
-		),
-	),
-  );		
-	
-	
-  $schema['sj_clr'] = array(
-	'description' => 'Named colors',
-	'primary key' => array ('name'),
-	'fields' => array(
-		'name' => array(
-		  'type' => 'varchar',
-		  'size' => 16,
-		  'not null' => TRUE,
-		),	
-		'color' => array(
-		  'type' => 'varchar',
-		  'size' => 6,
-		  'not null' => TRUE,
-		),
-		'family' => array (
-		  'type' => 'varchar',
-		  'size' => 16,
-		  'not null' => TRUE,
-		),
-		'shade' => array (
-		  'type' => 'varchar',
-		  'size' => 16,
-		  'not null' => TRUE,
-		),	
-	),
-  );
-  
-  $schema['sj_clrset'] = array(
-	'description' => 'Color sets',
-	'primary key' => array ('id'),
-	'fields' => array(
-		'id' => array(
-		  'type' => 'int',
-		  'size' => 16,
-		  'not null' => TRUE,
-		),
-		
-	),
-  );
- 
-  
-  $schema['sj_clrset_clrs'] = array(
-	'description' => 'Color set values',
-	'indexes' => array ('clrsetid'),
-	'fields' => array(
-		'clrsetid' => array(
-		  'type' => 'int',
-		  'size' => 16,
-		  'not null' => TRUE,
-		),
-		'clrtype' => array(
-		  'type' => 'varchar',
-		  'size' => 16,
-		  'not null' => TRUE,
-		),
-		'clr' => array(
-		  'type' => 'varchar',
-		  'size' => 16,
-		  'not null' => TRUE,
-		),
-	),
-  );  
-}
+/*
 
-function sj_core_schema_users(&$schema) {
-  $schema['sj_user_persona'] = array(
-	'description' => 'Personas (sub-users)',
-	'primary key' => array ('id'),
-	'indexes' => array ('username', 'name'),
-	'fields' => array(
-		'id' => array(
-		  'type' => 'int',
-		  'size' => 4,
-		  'not null' => TRUE,
-		),
-		'username' => array(
-		  'type' => 'varchar',
-		  'length' => 16,
-		  'not null' => TRUE,
-		  'default' => '',
-		),	
-		'name' => array(
-		  'type' => 'varchar',
-		  'length' => 16,
-		  'not null' => TRUE,
-		  'default' => '',
-		),
-		'grp' => array(
-		  'type' => 'varchar',
-		  'length' => 16,
-		  'not null' => FALSE,
-		  'default' => NULL,
-		),
-		'clrsetid' => array (
-		  'type' => 'int',
-		  'size' => 16,
-		  'not null' => FALSE,
-		  'default' => NULL,
-		),
-		'date_added' => array(
-		  'mysql_type' => 'timestamp',
-		  'not null' => TRUE,
-		),	
-		'date_last_modified' => array(
-		  'mysql_type' => 'timestamp',
-		  'not null' => TRUE,
-		),			
-	),
-  );
+function sj_core_requirements($phase) {
+  $errors = array();
+  // Set the base path for the module, and use this to check the existence of files.
+  $path = drupal_get_path('module', 'jquery_palettepicker') . '/';
+  if ($phase == 'install') {
+    if (!function_exists('libraries_get_path')) {
+      module_load_include('module', 'libraries');
+    }
+    $path = libraries_get_path('palettepicker') ? libraries_get_path('palettepicker') : 'sites/all/libraries/palettepicker';
+    // The first file we check is the 3rd party integration. Without this file, the module will not work. Other.
+    // files are also required, but the assumption is made that if they got this file, they will have gotten all the other files.
+    // This is done to keep code relatively streamlined.
+    if (!is_file($path . '/js/palettepicker.js')) {
+      $t = get_t();
+      $errors['jquery_palettepicker_missing_files'] = array(
+        'title' => $t('Required files missing'),
+        'description' => $t(
+          'You are missing the required files for the Jquery palettepicker. Please download the palettepicker.zip from !eyecon and unzip the CSS, JS and IMAGES folders to !palettepicker_path. After doing this, confirm that the following path exists: !palettepicker_js_path.',
+          array(
+            '!eyecon' => l(
+              'http://www.eyecon.ro/palettepicker/',
+              'http://www.eyecon.ro/palettepicker/',
+              array(
+                'external' => TRUE,
+              )
+            ),
+            '!palettepicker_path' => '<strong>' . $path . '</strong>',
+            '!palettepicker_js_path' => '<strong>' . $path . '/js/palettepicker.js</strong>',
+          )
+        ),
+        'severity' => REQUIREMENT_ERROR,
+      );
+    }
+  }
+
+  return $errors;
 }
 
 
+function sj_core_field_schema($field) {
+  $columns = array(
+    'jquery_palettepicker' => array(
+      'type' => 'varchar',
+      'length' => 6,
+      'not null' => FALSE,
+    ),
+  );
+  return array(
+    'columns' => $columns,
+  );
+}
+
+*/

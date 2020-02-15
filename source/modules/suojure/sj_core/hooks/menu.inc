@@ -131,8 +131,10 @@ function sj_core_pages ($page) {
 
 function sj_core_load_css ($page, $type = 'page', $module = 'sj_core') {
 	$paths = array (
-		'CSS_MODULE' => drupal_get_path('module', $module).'/pages/',
 		'CSS_THEME' => drupal_get_path('theme', 'suojure').'/css/components/',
+		'CSS_ZMODULE1' => drupal_get_path('module', $module).'/pages/',
+		'CSS_ZMODULE2' => drupal_get_path('module', $module).'/'.$type.'/',
+		'CSS_ZMODULE3' => drupal_get_path('module', $module).'/'.$type.'s/',
 	);
 	$filenames = array ('common.css', $page.'.css', $type.'s.css', $page.'_'.$type.'.css');
 
